@@ -261,8 +261,9 @@ export default {
 			socket.emit('login addSession', sendData);
 			socket.on('login addSession', (data)=>{
 				if(data.ok==1){
-					// 父组件用户名刷新
-					this.$store.getters.getPower(this.$parent.init);
+					// 评论列表用户名刷新(当前是否登陆成功状态)
+					this.$store.state.loginSuccess=true;
+					// this.$store.getters.getPower(this.$parent.init);
 				}else{
 					console.log("登陆失败")
 				}
@@ -346,8 +347,8 @@ export default {
 		position: fixed;
 		top: 0px;
 		left: 0px;
-		background-color: rgba(0,0,0,.5);
-		z-index: 5;
+		background-color: rgba(0,0,0,.6);
+		z-index: 99;
 		.login-content{
 			width: 350px;
 			height: 470px;

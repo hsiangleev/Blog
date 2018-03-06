@@ -55,7 +55,7 @@ export default {
                     }else{
                         clearInterval(this.timer);
                     }
-                },200)
+                },150)
 				socket.off("timeaxis");
                 this.$store.state.loading=false;
 			});
@@ -73,7 +73,7 @@ export default {
     }
     .list-enter, .list-leave-to{
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-100px);
     }
 	#timeaxis{
         padding: 25px 0px;

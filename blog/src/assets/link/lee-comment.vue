@@ -47,13 +47,13 @@
 				</li>
 			</ul>
 		</div>
-		<lee-login></lee-login>
+		<!-- <lee-login></lee-login> -->
 	</div>
 </template>
 
 <script>
 import io from "./../../socket.io.js"
-import leeLogin from "./lee-login.vue"
+// import leeLogin from "./lee-login.vue"
 export default {
 	name: 'lee-comment',
 	props: ["num"],
@@ -72,6 +72,16 @@ export default {
 	computed: {
 		isShowTextarea() {
 			return this.isLogin;
+		},
+		loginSuccess() {
+			return this.$store.state.loginSuccess
+		}
+	},
+	watch: {
+		// 检测登陆状态改变时刷新用户名
+		loginSuccess(val) {
+			// 调用vuex中的方法获取name
+			this.$store.getters.getPower(this.init);
 		}
 	},
 	methods: {
@@ -129,7 +139,9 @@ export default {
 		login() {
 			if(this.isLogin){
 				sessionStorage.removeItem("id");
-				this.init();
+				// this.init();
+				// 退出登录
+				this.$store.state.loginSuccess=false;
 			}else{
 				this.$store.state.login=true;
 			}
@@ -259,7 +271,7 @@ export default {
 		},
 	},
 	components: {
-		leeLogin
+		// leeLogin
 	}
 }
 </script>

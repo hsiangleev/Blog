@@ -6,7 +6,7 @@
 		<lee-icon></lee-icon>
 		<lee-to-top></lee-to-top>
 		<lee-loading></lee-loading>
-		
+		<lee-login></lee-login>
 	</div>
 </template>
 
@@ -19,6 +19,7 @@ import leeAside from "./assets/components/lee-aside.vue"
 import leeIcon from "./assets/components/lee-icon.vue"
 import leeToTop from "./assets/components/lee-to-top.vue"
 import leeLoading from "./assets/components/lee-loading.vue"
+import leeLogin from "./assets/link/lee-login.vue"
 
 // const leeHeader = () => import('./assets/components/lee-header.vue');
 // const leeContent = () => import('./assets/components/lee-content.vue');
@@ -40,7 +41,8 @@ export default {
 		leeContent,
 		leeIcon,
 		leeToTop,
-		leeLoading
+		leeLoading,
+		leeLogin
 	},
 	mounted() {
 		this.init();

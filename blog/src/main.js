@@ -93,8 +93,9 @@ const store=new Vuex.Store({
 	state: {
 		isShowAside: true,
 		loading: false,
-		login: false,
-		count: 0
+		login: false,			// 是否显示登陆窗
+		count: 0,
+		loginSuccess: false,	// 用户是否登陆成功(主要用于用户登陆成功时刷新用户名)
 	},
 	mutations: {
 		changeAside(state) {
