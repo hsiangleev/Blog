@@ -1,6 +1,6 @@
 # 个人博客
 
-> A Vue.js project
+> 我的毕业设计
 
 ## Build Setup
 
