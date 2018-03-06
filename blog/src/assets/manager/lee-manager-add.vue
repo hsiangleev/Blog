@@ -1,0 +1,288 @@
+<template>
+	<div id="add" class="add">
+		<div v-if="hasArticle">
+			<div class="clearfix" v-if="name==='凉宫西辰'">
+				<div class="add-set">
+					<el-select v-model="listValue" placeholder="文章分类">
+						<el-option
+							v-for="item in options"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value">
+						</el-option>
+					</el-select>
+					<el-button :plain="true" @click="submit">提交</el-button>
+				</div>
+				<div class="add-title">
+					<el-input v-model="title" placeholder="请输入你的文章标题"></el-input>
+					<el-input
+						type="textarea"
+						:autosize="{ minRows: 2}"
+						placeholder="请输入您的文章前言"
+						v-model="preface">
+					</el-input>
+				</div>
+				<div class="add-left">
+					<el-input
+						type="textarea"
+						:autosize="{ minRows: 20}"
+						placeholder="请输入您的文章内容( makedown语法 )"
+						v-model="article" @keydown="supportTabs" ref="textarea">
+					</el-input>
+				</div>
+				<div class="add-right markdown-body" v-html="msg">
+					
+				</div>
+			</div>
+			<div v-else>
+				没有权限查看本页面
+			</div>
+		</div>
+		<div v-else>
+			暂无此博客
+		</div>
+	</div>
+</template>
+
+<script>
+import io from "./../../socket.io.js"
+import 'github-markdown-css/github-markdown.css'
+import marked from "marked"
+export default {
+	name: 'lee-manager-add',
+	data () {
+		return {
+			data: "",
+			title: '',		// 标题
+			preface: "",	// 前言
+			article: "",	// 正文(makedown)
+			msg: "",		// 正文
+			listValue: "",	// 分类
+			ellipsis: "",
+			options: [
+				{
+					value: '0',
+					label: '== 文章分类 =='
+				}, 
+				{
+					value: '1',
+					label: 'demo'
+				}, 
+				{
+					value: '2',
+					label: 'html'
+				}, 
+				{
+					value: '3',
+					label: 'css'
+				}, 
+				{
+					value: '4',
+					label: 'vue'
+				}
+			],
+
+			finishData: {},
+			articleLength: 0,
+			name: "",
+			hasArticle: true,		// 判断路由地址是否超出文章总数
+		}
+	},
+	computed: {
+		num() {
+			return this.$route.params.id
+		},
+		isEdit() {
+			return this.num>0;			// 是否为编辑状态
+		}
+	},
+	mounted() {
+		// 调用vuex中的方法获取name
+		this.$store.getters.getPower(this.init);
+		this.msg=marked(this.article);
+	},
+	watch: {
+		article() {
+			this.msg=marked(this.article);
+		}
+	},
+	methods: {
+		init(name) {
+			// 获取当前登录的name
+			this.name=name;
+			this.$store.state.loading=true;
+			var socket = io();
+			var sendData={
+				whereStr: {
+					_id: "blog"
+				},
+				num: this.num-1
+			}
+			socket.emit('edit init', sendData);
+			socket.on('edit init', (data)=>{
+				// 判断路由地址是否超出文章总数
+				if(this.num>data.len){
+					this.hasArticle=false;
+				}else{
+					this.data=data.data;
+					// 编辑文章初始化内容
+					if(this.isEdit){
+						let label=this.data.type;
+						this.options.forEach((val,index)=>{
+							if(val.label==label){
+								this.listValue=val.value;
+							}
+						})
+						this.title=this.data.article.title;
+						this.preface=this.data.article.header;
+						this.article=this.data.article.origin;
+					}else{
+						this.articleLength=data.len;
+					}
+				}
+					
+				socket.off("edit init");
+				this.$store.state.loading=false;
+			});
+				
+		},
+		
+		submit() {
+			// 提交编辑之后的文章
+			this.$store.state.loading=true;
+			if(this.title!="" && this.preface!="" && this.article!="" && this.listValue!="0"){
+				let n=this.findStr(this.msg, "\n", 3);
+				this.ellipsis=this.msg.slice(0,n);
+
+				let socket = io();
+				let sendData={
+					isEdit: this.isEdit,
+					type: this.options[Number(this.listValue)].label,
+					title: this.title,
+					header: this.preface,
+					ellipsis: this.ellipsis,
+					text: this.msg,
+					origin: this.article,
+					num: this.num-1,
+					articleLength: this.articleLength,
+					time: this.getTime()
+				}
+				socket.emit('edit article', sendData);
+				socket.on('edit article', (data)=>{
+					if(data.ok==1){
+						this.$store.state.loading=false;
+						if(this.isEdit){
+							this.$message({
+								message: '修改成功',
+								center: true,
+								duration: 1500,
+								type: "success"
+							});
+						}else{
+							this.$message({
+								message: '新增成功',
+								center: true,
+								duration: 1500,
+								type: "success"
+							});
+						}
+						
+					}else{
+						this.$store.state.loading=false;
+						this.$message({
+							message: '操作失败',
+							center: true,
+							duration: 1500,
+							type: "error"
+						});
+					}
+					socket.off("edit article");
+				});
+
+			}else{
+				this.$store.state.loading=false;
+				this.$message({
+					message: '信息输入不全',
+					center: true,
+					duration: 1500,
+					type: "warning"
+				});
+			}
+		},
+		// 查找一个字符串的某个字符第num次出现的次数
+		findStr(str,cha,num) {
+			var x=str.indexOf(cha);
+		    for(var i=0;i<num;i++){
+		        x=str.indexOf(cha,x+1);
+		    }
+		    return x;
+		},
+		// 获取当前时间
+		getTime() {
+			let myDate = new Date();//获取系统当前时间
+			let date=myDate.getFullYear()+"-"+this.setTime(Number(myDate.getMonth())+1)+"-"+this.setTime(myDate.getDate());
+			let time=this.setTime(myDate.getHours())+":"+this.setTime(myDate.getMinutes())+":"+this.setTime(myDate.getSeconds())
+			let str=date+" "+time;
+			return str;
+		},
+		// 设置时间格式
+		setTime(str) {
+			if(parseInt(str)>9){
+				return str;
+			}else{
+				return "0"+str
+			}
+		},
+		// 支持tab缩进
+		supportTabs() {
+			let e=window.event || event;
+			if (e.keyCode == 9) {
+                e.preventDefault();
+                let indent = '	';
+                let start = this.$refs["textarea"].selectionStart;
+                let end = this.$refs["textarea"].selectionEnd;
+                let selected = window.getSelection().toString();
+                selected = indent + selected.replace(/\n/g, '\n' + indent);
+                this.article = this.article.substring(0, start) + selected
+                        + this.article.substring(end);
+                this.$refs["textarea"].setSelectionRange(start + indent.length, start
+                        + selected.length);
+            }
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+	.add{
+		position: relative;
+		top: 0px;
+		left: 0px;
+		z-index: 2;
+		margin: 30px 0px;
+		input,
+		button,
+		textarea{
+			background-color: transparent;
+		}
+		.add-set{
+			text-align: right;
+		}
+		.add-left{
+			width: 100%;
+			textarea{
+				width: 100%;
+				font-size: 14px;
+			}
+		}
+		.add-right{
+			width: 100%;
+		}
+	}
+	@media only screen and (max-width: 767px){
+		#add{
+			margin-left: -40px;
+			margin-right: -40px;
+		}
+	}
+</style>
