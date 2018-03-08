@@ -47,7 +47,7 @@ import add from "./assets/manager/lee-manager-add.vue"
 import io from "./socket.io.js"
 // 注册路由
 const router=new VueRouter({
-	// mode: "history",
+	mode: "history",
 	base: __dirname,
 	routes: [
 		{

@@ -5,6 +5,10 @@ var io = require('socket.io')(http);
 
 var loadServer=require("./lib/loadServer");
 
+var history = require('connect-history-api-fallback');
+
+// vue-router history模式使用
+app.use(history());
 app.use(express.static('blog'));
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/public/index.html');
