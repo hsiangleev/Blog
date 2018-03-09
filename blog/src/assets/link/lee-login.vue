@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import io from "./../../socket.io.js"
+import axios from "axios"
 export default {
 	name: 'lee-login',
 	data() {
@@ -70,7 +70,7 @@ export default {
 		var validatePass = (rule, value, callback) => {
 			if (value === '') {
 				callback(new Error('请输入密码'));
-			} else if(value.length<3 || value.length>16){
+			} else if(value.length<6 || value.length>16){
 				callback(new Error('密码长度在6到16位'));
 			} else {
 				if (this.ruleForm2.checkPass !== '') {
@@ -82,7 +82,7 @@ export default {
 		var validatePass2 = (rule, value, callback) => {
 			if (value === '') {
 				callback(new Error('请再次输入密码'));
-			} else if(value.length<3 || value.length>16){
+			} else if(value.length<6 || value.length>16){
 				callback(new Error('密码长度在6到16位'));
 			} else if (value !== this.ruleForm2.pass) {
 				callback(new Error('两次输入密码不一致!'));
@@ -162,38 +162,59 @@ export default {
 		}
 	},
 	methods: {
+		encrypt(str) {
+			var len=str.length;
+			var encryptStr="";
+			for(var i=0;i<len;i++){
+				encryptStr+=String.fromCharCode(str.charCodeAt(i)-520);
+			}
+			return encryptStr;
+		},
+		Decrypt(str) {
+			var len=str.length;
+			var decryptStr="";
+			for(var i=0;i<len;i++){
+				decryptStr+=String.fromCharCode(str.charCodeAt(i)+520);
+			}
+			return decryptStr;
+		},
 		submitForm(formName) {
 			// this.$store.state.loading=true;
 			if(formName=="ruleForm1"){
 				// 登录
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						var socket = io();
+
+						var name=this.encrypt(this.encrypt(this.ruleForm1.name));
+						var pword=this.encrypt(this.encrypt(this.ruleForm1.pass));
+
 						var sendData={
 							whereStr: {
 								_id : "user"
 							},
 							sendMsg: {
-								name: this.ruleForm1.name, 
-								pword: this.ruleForm1.pass
+								name: name, 
+								pword: pword
 							}	
 						}
-						socket.emit('login', sendData);
-						
-						socket.on('login', (data)=>{
+						axios({
+							method: 'post',
+							url: '/login',
+							data: sendData
+						})
+						.then((res)=>{
 							var onOff=true;
 							var ind=0;
-							if(data.result==="1"){
+							if(res.data.result==="1"){
 								onOff=false;
-								ind=data.index;
+								ind=res.data.index;
 							}
-							socket.off("login");
 
 							if(onOff){
 								this.$message({
 									message: '用户名或密码输入错误',
 									center: true,
-									duration: 3000,
+									duration: 1500,
 									type: "wrong"
 								});
 								this.$refs[formName].resetFields();
@@ -203,7 +224,9 @@ export default {
 							}	
 							
 							this.$store.state.loading=false;
-							
+						})
+						.catch((error)=>{
+							console.log(error);
 						});
 					} else {
 						return false;
@@ -213,7 +236,6 @@ export default {
 				// 注册
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						var socket = io();
 						var sendData={
 							whereStr: {
 								_id : "user"
@@ -222,25 +244,31 @@ export default {
 								name: this.ruleForm2.name
 							}
 						}
-						socket.emit('sign', sendData);
-						socket.on('sign', (data)=>{
-							var onOff=data.isNoExit;
-							this.num=data.num;
+
+						axios({
+							method: 'post',
+							url: '/sign',
+							data: sendData
+						})
+						.then((res)=>{
+							var onOff=res.data.isNoExit;
+							this.num=res.data.num;
 							// 用户名不存在
 							if(onOff){
-								socket.off("sign");
 								// 添加到数据库
 								this.addUser();
 							}else{
 								this.$message({
 									message: '用户名已存在，请重新输入',
 									center: true,
-									duration: 3000,
+									duration: 1500,
 									type: "wrong"
 								});
 								this.$refs[formName].resetFields();
-								socket.off("sign");
 							}
+						})
+						.catch((error)=>{
+							console.log(error);
 						});
 					} else {
 						return false;
@@ -253,44 +281,57 @@ export default {
 			// 每次重新登录时自动生成一个字符存到数据库和sessionStore中，进入页面时判断是否相等，相等则取出name值
 			let str=new Date().getTime();
 			sessionStorage.setItem("id", str);
-			let socket = io();
 			var sendData={
 				session: str,
 				index: index
 			}
-			socket.emit('login addSession', sendData);
-			socket.on('login addSession', (data)=>{
-				if(data.ok==1){
+
+			axios({
+				method: 'post',
+				url: '/loginAddSession',
+				data: sendData
+			})
+			.then((res)=>{
+				if(res.data.ok==1){
 					// 评论列表用户名刷新(当前是否登陆成功状态)
 					this.$store.state.loginSuccess=true;
 					// this.$store.getters.getPower(this.$parent.init);
 				}else{
 					console.log("登陆失败")
 				}
-				socket.off("login addSession");
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 			this.$store.state.login=false;
 		},
 		addUser() {
-			let socket = io();
+			var name=this.encrypt(this.encrypt(this.ruleForm2.name));
+			var pword=this.encrypt(this.encrypt(this.ruleForm2.pass));
 			var sendData={
-				name: this.ruleForm2.name,
-				pass: this.ruleForm2.pass,
+				name: name,
+				pass: pword,
 				num: this.num
 			}
-			socket.emit('sign addUser', sendData);
-			socket.on('sign addUser', (data)=>{
-				if(data.ok==1){
+			axios({
+				method: 'post',
+				url: '/signAddUser',
+				data: sendData
+			})
+			.then((res)=>{
+				if(res.data.ok==1){
 					this.$message({
 						message: '注册成功',
 						center: true,
-						duration: 3000,
+						duration: 1500,
 						type: "success"
 					});
 				}else{
 					console.log("注册失败")
 				}
-				socket.off("sign addUser");
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		},
 		resetForm(formName) {

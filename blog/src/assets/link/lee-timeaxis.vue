@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import io from "./../../socket.io.js"
+import axios from "axios"
 export default {
 	name: 'lee-timeaxis',
 	data () {
@@ -36,28 +36,32 @@ export default {
 		init() {
 			// 获取当前登录的name
 			this.$store.state.loading=true;
-			let socket = io();
 			var sendData={
 				whereStr: {
 					_id: "blog"
 				}
-			}
-			socket.emit('timeaxis', sendData);
-			socket.on('timeaxis', (data)=>{
-				// this.data=data.data;
+            }
+            axios({
+				method: 'post',
+				url: '/timeaxis',
+				data: sendData
+			})
+			.then((res)=>{
                 var i=0;
                 clearInterval(this.timer);
                 this.timer=setInterval(()=>{
-                    if(i<data.data.length){
+                    if(i<res.data.data.length){
                         // 逐个放入，动画效果
-                        this.data.push(data.data[i]);
+                        this.data.push(res.data.data[i]);
                         i++;
                     }else{
                         clearInterval(this.timer);
                     }
                 },150)
-				socket.off("timeaxis");
                 this.$store.state.loading=false;
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
         },
         changeRouter(index) {

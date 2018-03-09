@@ -44,7 +44,7 @@ import timeaxis from "./assets/link/lee-timeaxis.vue"
 import text from "./assets/link/lee-text.vue"
 import manager from "./assets/link/lee-manager.vue"
 import add from "./assets/manager/lee-manager-add.vue"
-import io from "./socket.io.js"
+import axios from "axios"
 // 注册路由
 const router=new VueRouter({
 	mode: "history",
@@ -116,7 +116,7 @@ const store=new Vuex.Store({
 		getPower: ()=>(callback)=>{
 			let value = sessionStorage.getItem("id");
 			if(!!value){
-				var socket = io();
+				// 若name为-，则说明没有拿到数据，即session已经更改，已经在另一个窗口登陆，需清空当前窗口登陆信息
 				var name="-";
 				var sendData={
 					whereStr: {
@@ -126,13 +126,20 @@ const store=new Vuex.Store({
 						id: Number(value)
 					}
 				}
-				socket.emit('comment login', sendData);
-				socket.on('comment login', (data)=>{
-					if(data.data!==-1){
-						name=data.data;
+
+				axios({
+					method: 'post',
+					url: '/commentLogin',
+					data: sendData
+				})
+				.then((res)=>{
+					if(res.data.data!==-1){
+						name=res.data.data;
 					}
-					socket.off("comment login");
 					callback(name);
+				})
+				.catch((error)=>{
+					console.log(error);
 				});
 			}else{
 				callback("");

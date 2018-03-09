@@ -48,8 +48,7 @@
 </template>
 
 <script>
-// import ajax from "./../../lee-ajax.js"
-import io from "./../../socket.io.js"
+import axios from "axios"
 import 'github-markdown-css/github-markdown.css'
 import marked from "marked"
 export default {
@@ -80,7 +79,6 @@ export default {
 		handleCurrentChange(val) {
 			this.$nextTick(()=>{
 				this.$store.state.loading=true;
-				var socket = io();
 				// 传回服务器数据
 				var setData={
 					whereStr: {
@@ -91,14 +89,20 @@ export default {
 						currentPage: this.currentPage
 					}
 				}
-				socket.emit('article', setData);
-				socket.on('article', (data)=>{
-					this.data=data.data;
-					this.total=data.total;
-
-					socket.off("article");
+				axios({
+					method: 'post',
+					url: '/article',
+					data: setData
+				})
+				.then((res)=>{
+					this.data=res.data.data;
+					this.total=res.data.total;
 					this.$store.state.loading=false;
+				})
+				.catch((error)=>{
+					console.log(error);
 				});
+
 				this.backToTop();
 			})
 		},

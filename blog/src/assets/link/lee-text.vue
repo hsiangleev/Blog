@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import io from "./../../socket.io.js"
+import axios from "axios"
 import 'github-markdown-css/github-markdown.css'
 import marked from "marked"
 import leeComment from "./lee-comment"
@@ -67,7 +67,6 @@ export default {
 	methods: {
 		init() {
 			this.$store.state.loading=true;
-			var socket = io();
 			var sendData={
 				whereStr: {
 					_id: "blog"
@@ -76,33 +75,45 @@ export default {
 					num: Number(this.num)-1
 				}
 			}
-			socket.emit('text', sendData);
-			socket.on('text', (data)=>{
+
+			axios({
+				method: 'post',
+				url: '/text',
+				data: sendData
+			})
+			.then((res)=>{
 				// 判断路由地址是否超出文章总数
-				if(data.data==-1){
+				if(res.data.data==-1){
 					this.hasArticle=false;
 				}else{
-					this.data=data.data;
-					this.article=data.article;
+					this.data=res.data.data;
+					this.article=res.data.article;
 				}
-				socket.off("text");
 				this.updateReadNum();
 				this.$store.state.loading=false;
 				this.loading=true;
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		},
 		// 更新文章阅读次数
 		updateReadNum() {
-			var socket = io();
 			var sendData={
 				num: Number(this.num)-1,
 				readNum: this.article.num+1
 			}
-			socket.emit('text readNum', sendData);
-			socket.on('text readNum', (data)=>{
-				if(data.ok==1){
-					// console.log()
-				}
+			
+			axios({
+				method: 'post',
+				url: '/textReadNum',
+				data: sendData
+			})
+			.then((res)=>{
+				
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		}
 	},

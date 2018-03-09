@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import io from "./../../socket.io.js"
+import axios from "axios"
 import 'github-markdown-css/github-markdown.css'
 import marked from "marked"
 export default {
@@ -111,20 +111,23 @@ export default {
 			// 获取当前登录的name
 			this.name=name;
 			this.$store.state.loading=true;
-			var socket = io();
 			var sendData={
 				whereStr: {
 					_id: "blog"
 				},
 				num: this.num-1
 			}
-			socket.emit('edit init', sendData);
-			socket.on('edit init', (data)=>{
+			axios({
+				method: 'post',
+				url: '/editInit',
+				data: sendData
+			})
+			.then((res)=>{
 				// 判断路由地址是否超出文章总数
-				if(this.num>data.len){
+				if(this.num>res.data.len){
 					this.hasArticle=false;
 				}else{
-					this.data=data.data;
+					this.data=res.data.data;
 					// 编辑文章初始化内容
 					if(this.isEdit){
 						let label=this.data.type;
@@ -137,12 +140,13 @@ export default {
 						this.preface=this.data.article.header;
 						this.article=this.data.article.origin;
 					}else{
-						this.articleLength=data.len;
+						this.articleLength=res.data.len;
 					}
 				}
-					
-				socket.off("edit init");
 				this.$store.state.loading=false;
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 				
 		},
@@ -154,7 +158,6 @@ export default {
 				let n=this.findStr(this.msg, "\n", 3);
 				this.ellipsis=this.msg.slice(0,n);
 
-				let socket = io();
 				let sendData={
 					isEdit: this.isEdit,
 					type: this.options[Number(this.listValue)].label,
@@ -167,9 +170,13 @@ export default {
 					articleLength: this.articleLength,
 					time: this.getTime()
 				}
-				socket.emit('edit article', sendData);
-				socket.on('edit article', (data)=>{
-					if(data.ok==1){
+				axios({
+					method: 'post',
+					url: '/editArticle',
+					data: sendData
+				})
+				.then((res)=>{
+					if(res.data.ok==1){
 						this.$store.state.loading=false;
 						if(this.isEdit){
 							this.$message({
@@ -196,7 +203,9 @@ export default {
 							type: "error"
 						});
 					}
-					socket.off("edit article");
+				})
+				.catch((error)=>{
+					console.log(error);
 				});
 
 			}else{

@@ -11,8 +11,8 @@
 </template>
 
 <script>
+import axios from "axios";
 import jsonp from "jsonp"
-import io from "./socket.io.js"
 import leeHeader from "./assets/components/lee-header.vue"
 import leeContent from "./assets/components/lee-content.vue"
 import leeAside from "./assets/components/lee-aside.vue"
@@ -50,34 +50,65 @@ export default {
 	methods: {
 		// 页面访问次数
 		init() {
-			let socket = io();
-			socket.emit('count');
-			socket.on('count', (data)=>{
-				this.$store.state.count=data;
-				socket.off("count");
-
+			axios({
+				method: 'post',
+				url: '/count',
+			})
+			.then((res)=>{
+				this.$store.state.count=res.data.count;
 				this.getAddress();
-
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		},
 		getAddress() {
-			let socket = io();
-			socket.emit('address');
-			socket.on('address', (ip)=>{
-				ip=ip.slice(7);
+			axios({
+				method: 'post',
+				url: '/address',
+			})
+			.then((res)=>{
+				var ip=res.data.address.slice(7);
 				jsonp('http://api.map.baidu.com/location/ip?ip='+ip+'&ak=2CxmmAAmLukVgX3bA7CUGpe7XaS2lE14&coor=bd09ll&callback=flightHandler', null, function (err, data) {
 					if (err) {
 						console.error(err.message);
 					} else {
 						if(data.status==0){
 							// 地址传回后台
-							socket.emit('address',data.address);
+							axios({
+								method: 'post',
+								url: '/address',
+								data: {
+									address: data.address
+								}
+							})
+							.then((res)=>{
+								
+							})
+							.catch((error)=>{
+								console.log(error);
+							});
 						}else{
-							socket.emit('address',data.message);
+							// 地址传回后台
+							axios({
+								method: 'post',
+								url: '/address',
+								data: {
+									address: data.message
+								}
+							})
+							.then((res)=>{
+								
+							})
+							.catch((error)=>{
+								console.log(error);
+							});
 						}
 					}
 				});
-				socket.off("address");
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		}
 	}

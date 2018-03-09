@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import io from "./../../socket.io.js"
+import axios from "axios"
 // import leeLogin from "./lee-login.vue"
 export default {
 	name: 'lee-comment',
@@ -87,7 +87,6 @@ export default {
 	methods: {
 		// 初始化页面
 		initPage() {
-			var socket = io();
 			var sendData={
 				whereStr: {
 					_id : "blog"
@@ -96,20 +95,27 @@ export default {
 					num: Number(this.num)-1
 				}
 			}
-			socket.emit('comment', sendData);
-			socket.on('comment', (data)=>{
-				this.data=data.data;
+
+			axios({
+				method: 'post',
+				url: '/comment',
+				data: sendData
+			})
+			.then((res)=>{
+				this.data=res.data.data;
 				this.data.forEach((val,index)=>{
 					this.textarea2[index]="";
 				})
-				socket.off("comment");
 				// 调用vuex中的方法获取name
 				this.$store.getters.getPower(this.init);
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
+
 		},
 		// 刷新页面
 		refresh() {
-			var socket = io();
 			var sendData={
 				whereStr: {
 					_id : "blog"
@@ -118,23 +124,44 @@ export default {
 					num: Number(this.num)-1
 				}
 			}
-			socket.emit('comment', sendData);
+
 			this.$store.state.loading=true;
-			socket.on('comment', (data)=>{
-				this.data=data.data;
+			axios({
+				method: 'post',
+				url: '/comment',
+				data: sendData
+			})
+			.then((res)=>{
+				this.data=res.data.data;
 				this.data.forEach((val,index)=>{
 					this.textarea2[index]="";
 				})
 				this.textarea1="";
-				socket.off("comment");
 				this.$store.state.loading=false;
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		},
 		// 判断是否登录
 		init(name) {
 			let value = sessionStorage.getItem("id");
-			this.isLogin=!!value;
-			this.name=name;
+			// 若name为-，则说明已经在另一个窗口登陆，清空当前窗口登陆信息
+			if(name!=="-"){
+				this.isLogin=!!value;
+				this.name=name;
+			}else{
+				// 退出登录
+				sessionStorage.removeItem("id");
+				this.$store.state.loginSuccess=false;
+				this.isLogin=false;
+				this.$message({
+					message: '您已在另一个窗口登陆',
+					center: true,
+					duration: 3000,
+					type: "warning"
+				});
+			}
 		},
 		login() {
 			if(this.isLogin){
@@ -142,6 +169,7 @@ export default {
 				// this.init();
 				// 退出登录
 				this.$store.state.loginSuccess=false;
+				this.isLogin=false;
 			}else{
 				this.$store.state.login=true;
 			}
@@ -165,7 +193,6 @@ export default {
 						type: "warning"
 					});
 				}else{
-					let socket = io();
 					var sendData={
 						name: this.name,
 						time: this.getTime(),						
@@ -173,10 +200,15 @@ export default {
 						num: this.num-1,
 						len: this.data.length
 					}
-					socket.emit('comment addComment', sendData);
 					this.$store.state.loading=true;
-					socket.on('comment addComment', (data)=>{
-						if(data.ok==1){
+
+					axios({
+						method: 'post',
+						url: '/commentAddComment',
+						data: sendData
+					})
+					.then((res)=>{
+						if(res.data.ok==1){
 							this.$store.state.loading=false;
 							this.$message({
 								message: '留言成功',
@@ -189,7 +221,9 @@ export default {
 						}else{
 							console.log("留言失败")
 						}
-						socket.off("comment addComment");
+					})
+					.catch((error)=>{
+						console.log(error);
 					});
 				}
 			}else{
@@ -215,7 +249,6 @@ export default {
 						type: "warning"
 					});
 				}else{
-					let socket = io();
 					var self=this;
 					var sendData={
 						name: this.name,
@@ -229,10 +262,15 @@ export default {
 						commentLen: this.data.length-index-1
 					}
 					
-					socket.emit('comment reply', sendData);
 					this.$store.state.loading=true;
-					socket.on('comment reply', (data)=>{
-						if(data.ok==1){
+
+					axios({
+						method: 'post',
+						url: '/commentReply',
+						data: sendData
+					})
+					.then((res)=>{
+						if(res.data.ok==1){
 							this.$store.state.loading=false;
 							this.$message({
 								message: '留言成功',
@@ -245,7 +283,9 @@ export default {
 						}else{
 							console.log("留言失败")
 						}
-						socket.off("comment reply");
+					})
+					.catch((error)=>{
+						console.log(error);
 					});
 				}
 			}else{

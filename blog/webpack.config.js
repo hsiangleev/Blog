@@ -91,7 +91,7 @@ module.exports = {
         '/': { 
             target: 'http://localhost:3000/',
             secure: false, // 接受 运行在 https 上的服务
-            changeOrigin: true
+            changeOrigin: true, // 存在跨域
         }
     }
   },

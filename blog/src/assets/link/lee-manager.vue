@@ -1,5 +1,5 @@
 <template>
-	<div id="manager">
+	<div id="manager" v-cloak>
 		<div class="manager-right" v-if="name==='凉宫西辰'">
 			<div class="manager-right-tabs">
 				<ul class="clearfix">
@@ -60,13 +60,13 @@
 			</div>
 		</div>
 		<div class="manager-power" v-else>
-			没有权限查看本页面
+			{{ msg }}
 		</div>
 	</div>
 </template>
 
 <script>
-import io from "./../../socket.io.js"
+import axios from "axios"
 export default {
 	name: 'lee-manager',
 	data () {
@@ -74,7 +74,8 @@ export default {
 			data: [],
 			tableData: [],
 			notPhone: true,
-			name: ""
+			name: "",
+			msg: "",
 		}
 	},
 	mounted() {
@@ -85,20 +86,26 @@ export default {
 	methods: {
 		// 获取数据，初始化数据
 		init(name) {
+			this.$store.state.loading=true;
 			// 获取当前登录的name
 			this.name=name;
-			this.$store.state.loading=true;
-			let socket = io();
 			var sendData={
 				whereStr: {
 					_id: "blog"
 				}
 			}
-			socket.emit('manager', sendData);
-			socket.on('manager', (data)=>{
-				this.tableData=data.data;
-				socket.off("manager");
+			axios({
+				method: 'post',
+				url: '/manager',
+				data: sendData
+			})
+			.then((res)=>{
+				this.tableData=res.data.data;
 				this.$store.state.loading=false;
+				this.msg="没有权限查看本页面";
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		},
 		// 小屏幕隐藏部分列
@@ -114,7 +121,6 @@ export default {
 				}else{
 					this.notPhone=false;
 				}
-
 			},false)
 		},
 		// 编辑时跳转
@@ -123,7 +129,6 @@ export default {
 		},
 		// 删除数据
 		deleteArticle(num) {
-			let socket = io();
 			// 从数组中移除num等于num的那一项
 			var sendData={
 				num: num
@@ -133,10 +138,14 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
-				socket.emit('manager deleteArticle', sendData);
 				this.$store.state.loading=true;
-				socket.on('manager deleteArticle', (data)=>{
-					if(data.ok==1){
+				axios({
+					method: 'post',
+					url: '/managerDeleteArticle',
+					data: sendData
+				})
+				.then((res)=>{
+					if(res.data.ok==1){
 						this.$store.state.loading=false;
 						this.$message({
 							message: '删除成功',
@@ -148,10 +157,12 @@ export default {
 						this.$store.state.loading=false;
 						console.log("删除失败")
 					}
-					socket.off("manager deleteArticle");
 					this.changeMongodbNum();
 					// 重新加载数据
 					this.$store.getters.getPower(this.init);
+				})
+				.catch((error)=>{
+					console.log(error);
 				});
 			}).catch(() => {
 				this.$message({
@@ -165,16 +176,21 @@ export default {
 		},
 		// 修改mongodb的数组num序号
 		changeMongodbNum() {
-			let socket = io();
 			var sendData={
 				len: this.tableData.length-1
 			}
-			socket.emit('manager changeNum', sendData);
-			socket.on('manager changeNum', (data)=>{
-				if(data.ok==1){
+			axios({
+				method: 'post',
+				url: '/managerChangeNum',
+				data: sendData
+			})
+			.then((res)=>{
+				if(res.data.ok==1){
 					// console.log("重置num");
 				}
-				socket.off("manager changeNum");
+			})
+			.catch((error)=>{
+				console.log(error);
 			});
 		},
 		// 点击文章标题跳转
@@ -186,6 +202,9 @@ export default {
 </script>
 
 <style lang="scss">
+	[v-cloak] {
+	display: none;
+	}
 	#manager{
 		position: relative;
 		top: 0px;
