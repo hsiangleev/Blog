@@ -71,7 +71,7 @@ export default {
 				{
 					text: "时间轴",
 					fontClass: "fa fa-archive",
-					address: "/timeaxis"
+					address: "/timeaxis/all"
 				},
 				{
 					text: "标签",
@@ -289,6 +289,7 @@ export default {
 					float: left;
 					a{
 						padding: 5px 10px;
+						font-size: 12px;
 						i{
 							display: inline-block;
 							width: 15px;
@@ -337,7 +338,7 @@ export default {
 	}
 	@media only screen and (min-width: 1500px){
 		#header {
-			padding: 5px 0px 0px;
+			padding: 20px 0px;
 			.header-logo{
 				padding-left: 210px;
 			}

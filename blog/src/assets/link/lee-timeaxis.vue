@@ -10,7 +10,7 @@
                     <span></span>
                     <a href="javascript:;" @click="changeRouter(val.num)">{{ val.time }} —— {{ val.title }}</a>
                 </li>
-                <li :key="len+2"></li>
+                <li :key="-1"></li>
             </transition-group>
         </ul>
 	</div>
@@ -23,10 +23,15 @@ export default {
 	data () {
 		return {
             arr: [],
-            len: 5,
             timer: null,
-            data: []
+            data: [],
+            isShow: false,
 		}
+    },
+    computed: {
+        type() {
+            return this.$route.params.type
+        }
     },
     mounted() {
         this.init();
@@ -38,8 +43,9 @@ export default {
 			this.$store.state.loading=true;
 			var sendData={
 				whereStr: {
-					_id: "blog"
-				}
+                    _id: "blog"
+				},
+                type: this.type
             }
             axios({
 				method: 'post',
@@ -47,6 +53,21 @@ export default {
 				data: sendData
 			})
 			.then((res)=>{
+                if(this.type==="all"){
+                    this.isShow=true;
+                }
+                res.data.data.forEach((val,index)=>{
+                    if(val.type===this.type){
+                        this.isShow=true;
+                    }
+                })
+                // 判断路由是否正确
+                if(!this.isShow){
+                    this.$router.push("../error");
+                    this.$store.state.loading=false;
+                    return;
+                }
+
                 var i=0;
                 clearInterval(this.timer);
                 this.timer=setInterval(()=>{

@@ -2,7 +2,9 @@
 	<div id="article">
 		<div class="article-content" v-for="(val,index) in data">
 			<div class="article-content-header">
-				{{ val.num }}
+				<a href="javascript:;" @click="changeRouter(index)">
+					{{ val.num }}
+				</a>
 			</div>
 			<div class="article-content-info">
 				<div class="time">
@@ -29,7 +31,7 @@
 				</div>
 			</div>
 			<div class="article-content-read">
-	            <a class="btn" @click="changeRouter(index)">
+	            <a href="javascript:;" class="btn" @click="changeRouter(index)">
 	            	阅读全文 »
 	            </a>
 			</div>

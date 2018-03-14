@@ -23,6 +23,9 @@ var managerChangeNum=require("./link/managerChangeNum");
 
 var editInit=require("./manager/editInit");
 var editArticle=require("./manager/editArticle");
+var getClassify=require("./manager/getClassify");
+var getTypeLen=require("./manager/getTypeLen");
+var managerAddList=require("./link/managerAddList");
 exports.loadServer=function(app){
     app.post('/count', function(req, res){
         count.count(res);
@@ -81,5 +84,17 @@ exports.loadServer=function(app){
     });
     app.post('/editArticle', function(req, res){
         editArticle.editArticle(res,req.body);
+    });
+    // 获取分类信息
+    app.post('/getClassify', function(req, res){
+        getClassify.getClassify(res,req.body);
+    });
+    // 获取每条分类信息长度
+    app.post('/getTypeLen', function(req, res){
+        getTypeLen.getTypeLen(res,req.body);
+    });
+    // 添加分类
+    app.post('/managerAddList', function(req, res){
+        managerAddList.managerAddList(res,req.body);
     });
 }

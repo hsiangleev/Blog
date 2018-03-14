@@ -1,45 +1,40 @@
 <template>
-	<div id="add" class="add">
-		<div v-if="hasArticle">
-			<div class="clearfix" v-if="name==='凉宫西辰'">
-				<div class="add-set">
-					<el-select v-model="listValue" placeholder="文章分类">
-						<el-option
-							v-for="item in options"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value">
-						</el-option>
-					</el-select>
-					<el-button :plain="true" @click="submit">提交</el-button>
-				</div>
-				<div class="add-title">
-					<el-input v-model="title" placeholder="请输入你的文章标题"></el-input>
-					<el-input
-						type="textarea"
-						:autosize="{ minRows: 2}"
-						placeholder="请输入您的文章前言"
-						v-model="preface">
-					</el-input>
-				</div>
-				<div class="add-left">
-					<el-input
-						type="textarea"
-						:autosize="{ minRows: 20}"
-						placeholder="请输入您的文章内容( makedown语法 )"
-						v-model="article" @keydown="supportTabs" ref="textarea">
-					</el-input>
-				</div>
-				<div class="add-right markdown-body" v-html="msg">
-					
-				</div>
+	<div id="add" class="add" v-cloak>
+		<div class="clearfix" v-if="name==='凉宫西辰'">
+			<div class="add-set">
+				<el-select v-model="listValue" placeholder="文章分类">
+					<el-option
+						v-for="item in options"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value">
+					</el-option>
+				</el-select>
+				<el-button :plain="true" @click="submit">提交</el-button>
 			</div>
-			<div v-else>
-				没有权限查看本页面
+			<div class="add-title">
+				<el-input v-model="title" placeholder="请输入你的文章标题"></el-input>
+				<el-input
+					type="textarea"
+					:autosize="{ minRows: 2}"
+					placeholder="请输入您的文章前言"
+					v-model="preface">
+				</el-input>
+			</div>
+			<div class="add-left">
+				<el-input
+					type="textarea"
+					:autosize="{ minRows: 20}"
+					placeholder="请输入您的文章内容( makedown语法 )"
+					v-model="article" @keydown="supportTabs" ref="textarea">
+				</el-input>
+			</div>
+			<div class="add-right markdown-body" v-html="msg">
+				
 			</div>
 		</div>
 		<div v-else>
-			暂无此博客
+			{{ msg }}
 		</div>
 	</div>
 </template>
@@ -52,6 +47,7 @@ export default {
 	name: 'lee-manager-add',
 	data () {
 		return {
+			msg: "",
 			data: "",
 			title: '',		// 标题
 			preface: "",	// 前言
@@ -64,28 +60,11 @@ export default {
 					value: '0',
 					label: '== 文章分类 =='
 				}, 
-				{
-					value: '1',
-					label: 'demo'
-				}, 
-				{
-					value: '2',
-					label: 'html'
-				}, 
-				{
-					value: '3',
-					label: 'css'
-				}, 
-				{
-					value: '4',
-					label: 'vue'
-				}
 			],
 
 			finishData: {},
 			articleLength: 0,
 			name: "",
-			hasArticle: true,		// 判断路由地址是否超出文章总数
 		}
 	},
 	computed: {
@@ -97,6 +76,7 @@ export default {
 		}
 	},
 	mounted() {
+		this.getClassify();
 		// 调用vuex中的方法获取name
 		this.$store.getters.getPower(this.init);
 		this.msg=marked(this.article);
@@ -107,6 +87,36 @@ export default {
 		}
 	},
 	methods: {
+		// 获取分类信息
+		getClassify() {
+			var sendData={
+				whereStr: {
+					_id: "classify"
+				}
+			}
+			axios({
+				method: 'post',
+				url: '/getClassify',
+				data: sendData
+			})
+			.then((res)=>{
+				this.options=[
+					{
+						value: '0',
+						label: '== 文章分类 =='
+					}, 
+				];
+				res.data.data.forEach((val,index)=>{
+					this.options.push({
+						value: index+1+"",
+						label: val
+					})
+				})
+			})
+			.catch((error)=>{
+				console.log(error);
+			});
+		},
 		init(name) {
 			// 获取当前登录的name
 			this.name=name;
@@ -115,7 +125,7 @@ export default {
 				whereStr: {
 					_id: "blog"
 				},
-				num: this.num-1
+				num: Number(this.num)-1
 			}
 			axios({
 				method: 'post',
@@ -123,9 +133,9 @@ export default {
 				data: sendData
 			})
 			.then((res)=>{
-				// 判断路由地址是否超出文章总数
-				if(this.num>res.data.len){
-					this.hasArticle=false;
+				// 判断404
+				if(res.data.data==-1){
+					this.$router.push("../../error");
 				}else{
 					this.data=res.data.data;
 					// 编辑文章初始化内容
@@ -143,6 +153,7 @@ export default {
 						this.articleLength=res.data.len;
 					}
 				}
+				this.msg="没有权限查看本页面";
 				this.$store.state.loading=false;
 			})
 			.catch((error)=>{
@@ -263,6 +274,9 @@ export default {
 </script>
 
 <style lang="scss">
+	[v-cloak] {
+		display: none;
+	}
 	.add{
 		position: relative;
 		top: 0px;

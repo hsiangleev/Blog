@@ -11,7 +11,8 @@ exports.manager=function(res,msg){
         		time: "",
         		commit: '',
         		read: '',
-        		num: 0,
+                num: 0,
+                type: "",
         	});
         }
         tableData.forEach((val,index)=>{
@@ -20,6 +21,7 @@ exports.manager=function(res,msg){
         	val.commit=data[index].comment.length;
         	val.read=data[index].article.num;
         	val.num=data[index].num;
+        	val.type=data[index].type;
         })
 
         var sendData={

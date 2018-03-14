@@ -1,4 +1,4 @@
-// import Vue from 'vue'
+import Vue from 'vue'
 
 // import { Pagination, FormItem, Row, Col, Loading, Form, Button, ButtonGroup, Table, Input, Message, TableColumn, MessageBox } from 'element-ui'
 
@@ -44,6 +44,7 @@ import timeaxis from "./assets/link/lee-timeaxis.vue"
 import text from "./assets/link/lee-text.vue"
 import manager from "./assets/link/lee-manager.vue"
 import add from "./assets/manager/lee-manager-add.vue"
+import error from "./assets/components/lee-error.vue"
 import axios from "axios"
 // 注册路由
 const router=new VueRouter({
@@ -63,8 +64,9 @@ const router=new VueRouter({
 			component: list
 		},
 		{
-			path: "/timeaxis",
+			path: "/timeaxis/:type",
 			name: "timeaxis",
+			props: true,
 			component: timeaxis
 		},
 		{
@@ -85,6 +87,12 @@ const router=new VueRouter({
 			name: "manager/add",
 			props: true,
 			component: add
+		},
+		// 404
+		{
+			path: "*",
+			name: "error",
+			component: error
 		},
 	]
 })

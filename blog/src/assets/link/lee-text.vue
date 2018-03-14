@@ -83,13 +83,15 @@ export default {
 			})
 			.then((res)=>{
 				// 判断路由地址是否超出文章总数
+				// 404判断
 				if(res.data.data==-1){
 					this.hasArticle=false;
+					this.$router.push("../error");
 				}else{
 					this.data=res.data.data;
 					this.article=res.data.article;
+					this.updateReadNum();
 				}
-				this.updateReadNum();
 				this.$store.state.loading=false;
 				this.loading=true;
 			})

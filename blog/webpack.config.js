@@ -8,9 +8,9 @@ module.exports = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
-  externals: {
-    Vue: "Vue"
-  },
+  // externals: {
+  //   Vue: "Vue"
+  // },
   module: {
     rules: [
       {

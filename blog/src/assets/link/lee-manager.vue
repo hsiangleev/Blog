@@ -13,7 +13,7 @@
 					<li>
 						<router-link to="/manager/add/0" title="">新增随笔</router-link>
 					</li>
-					<li><a href="javascript:;" title="">[编辑分类]</a></li>
+					<li><a href="javascript:;" @click="addList" title="">新增分类</a></li>
 					<li><a href="javascript:;" title="">[编辑分类]</a></li>
 				</ul>
 			</div>
@@ -31,6 +31,7 @@
 				    </el-table-column>
 
 				    <el-table-column
+				    	v-if="notPhone"
 						prop="time"
 						label="时间"
 						sortable>
@@ -46,6 +47,10 @@
 						prop="read"
 						label="阅读数"
 						sortable>
+				    </el-table-column>
+				    <el-table-column
+						prop="type"
+						label="分类">
 				    </el-table-column>
 				    <el-table-column
 						label="操作">
@@ -196,6 +201,72 @@ export default {
 		// 点击文章标题跳转
 		changeRouter(index) {
 			this.$router.push({ path: `/text/${index}` })
+		},
+		// 添加分类
+		addList() {
+			this.$prompt('请输入分类信息', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				inputPattern: /^([\u4E00-\uFA29]|[\uE7C7-\uE7F3]|[a-zA-Z0-9_]){2,16}$/,
+				inputErrorMessage: '分类长度2到16位'
+			}).then(({ value }) => {
+				var sendData={
+					whereStr: {
+						_id: "classify"
+					}
+				}
+				axios({
+					method: 'post',
+					url: '/getClassify',
+					data: sendData
+				})
+				.then((res)=>{
+					var hasList=false;
+					res.data.data.forEach((val)=>{
+						if(val===value){
+							hasList=true;
+						}
+					})
+					// 判断是否存在此分类
+					if(hasList){
+						this.$message({
+							type: 'wrong',
+							message: '此分类已存在，请重新输入'
+						}); 
+					}else{
+						axios({
+							method: 'post',
+							url: '/managerAddList',
+							data: {
+								whereStr: {
+									_id: "classify"
+								},
+								list: value
+							}
+						})
+						.then((r)=>{
+							if(r.data.ok==1){
+								this.$message({
+									type: 'success',
+									message: '已添加分类信息: ' + value
+								});
+							}
+						})
+						.catch((error)=>{
+							console.log(error);
+						});
+					}
+				})
+				.catch((error)=>{
+					console.log(error);
+				});
+
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '取消输入'
+				});       
+			});
 		}
 	}
 }
@@ -203,7 +274,7 @@ export default {
 
 <style lang="scss">
 	[v-cloak] {
-	display: none;
+		display: none;
 	}
 	#manager{
 		position: relative;
@@ -290,8 +361,8 @@ export default {
 	}
 	@media only screen and (max-width: 767px){
 		#manager{
-			margin-left: -28px;
-			margin-right: -28px;
+			margin-left: -8px;
+			margin-right: -8px;
 		}
 	}
 </style>
