@@ -22,7 +22,6 @@ export default {
 	},
 	mounted() {
 		this.getClassify();
-		this.getTypeLen();
 	},
 	methods: {
 		// 获取分类信息
@@ -40,7 +39,7 @@ export default {
 			})
 			.then((res)=>{
 				this.type=res.data.data;
-				this.$store.state.loading=false;
+				this.getTypeLen();
 			})
 			.catch((error)=>{
 				console.log(error);
@@ -67,6 +66,7 @@ export default {
 						this.len.push(0);
 					}
 				})
+				this.$store.state.loading=false;
 			})
 			.catch((error)=>{
 				console.log(error);

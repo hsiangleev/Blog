@@ -146,9 +146,14 @@ export default {
 			padding: 0px;
 		}
 	}
+	@media only screen and (min-width: 1200px){
+		#nest{
+			padding: 0px 180px;
+		}
+	}
 	@media only screen and (min-width: 1500px){
 		#nest{
-			padding: 0px 200px;
+			padding: 0px 256px;
 		}
 	}
 </style>

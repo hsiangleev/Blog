@@ -99,6 +99,7 @@ export default {
 				.then((res)=>{
 					this.data=res.data.data;
 					this.total=res.data.total;
+					this.$store.state.logLength=res.data.total;
 					this.$store.state.loading=false;
 				})
 				.catch((error)=>{

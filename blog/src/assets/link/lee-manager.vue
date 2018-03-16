@@ -1,17 +1,17 @@
 <template>
 	<div id="manager" v-cloak>
-		<div class="manager-right" v-if="name==='凉宫西辰'">
+		<div class="manager-right" v-if="isShow">
 			<div class="manager-right-tabs">
 				<ul class="clearfix">
-					<li><a href="javascript:;" class="current" title="">随笔</a></li>
-					<li><a href="javascript:;" title="">随笔</a></li>
-					<li><a href="javascript:;" title="">随笔</a></li>
+					<li><a href="javascript:;" class="current" title="">日志</a></li>
+					<li><a href="javascript:;" title="">日志</a></li>
+					<li><a href="javascript:;" title="">日志</a></li>
 				</ul>
 			</div>
 			<div class="manager-right-header">
 				<ul class="clearfix">
 					<li>
-						<router-link to="/manager/add/0" title="">新增随笔</router-link>
+						<router-link to="/manager/add/0" title="">新增日志</router-link>
 					</li>
 					<li><a href="javascript:;" @click="addList" title="">新增分类</a></li>
 					<li><a href="javascript:;" title="">[编辑分类]</a></li>
@@ -81,6 +81,11 @@ export default {
 			notPhone: true,
 			name: "",
 			msg: "",
+		}
+	},
+	computed: {
+		isShow() {
+			return this.name===this.$store.state.managerName;
 		}
 	},
 	mounted() {

@@ -32,6 +32,12 @@
 								{{ val.text }}
 							</router-link>
 						</li>
+						<li v-if="isShowManager">
+							<router-link to="/manager">
+								<i class="fa fa-tags"></i>
+								管理
+							</router-link>
+						</li>
 					</ul>
 				</div>
 				<!-- 手机端 -->
@@ -42,6 +48,12 @@
 								<router-link :to="val.address">
 									<i :class="val.fontClass"></i>
 									{{ val.text }}
+								</router-link>
+							</li>
+							<li v-if="isShowManager">
+								<router-link to="/manager">
+									<i class="fa fa-tags"></i>
+									管理
 								</router-link>
 							</li>
 						</ul>
@@ -74,14 +86,9 @@ export default {
 					address: "/timeaxis/all"
 				},
 				{
-					text: "标签",
-					fontClass: "fa fa-tags",
-					address: "/home"
-				},
-				{
 					text: "关于",
 					fontClass: "fa fa-user",
-					address: "/manager"
+					address: "/about"
 				},
 			],
 			isShowNav: false,		// 是否下拉导航
@@ -103,6 +110,9 @@ export default {
 		// 是否显示手机模式的下拉导航
 		phone() {
 			return this.isPhone && this.isShowNav;
+		},
+		isShowManager() {
+			return this.$store.state.isShowManager;
 		}
 	},
 	watch: {
@@ -336,14 +346,24 @@ export default {
 		    }
 		}
 	}
+	@media only screen and (min-width: 1200px){
+		#header {
+			.header-logo{
+				padding-left: 190px;
+			}
+		    .nav{
+		    	padding-right: 190px;
+		    }
+		}
+	}
 	@media only screen and (min-width: 1500px){
 		#header {
 			padding: 20px 0px;
 			.header-logo{
-				padding-left: 210px;
+				padding-left: 266px;
 			}
 		    .nav{
-		    	padding-right: 200px;
+		    	padding-right: 266px;
 		    }
 		}
 	}

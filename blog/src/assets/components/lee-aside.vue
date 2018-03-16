@@ -10,9 +10,19 @@
 					<h4>心有猛虎，细嗅蔷薇</h4>
 				</div>
 				<div class="aside-state clearfix">
-					<a href="javascript:;" title="" v-for="val in 3">
-						<span>11</span>
+					<router-link to="/timeaxis/all">
+						<span>{{ logLength }}</span>
 						<span>日志</span>
+					</router-link>
+					<router-link to="/list">
+						<span>{{ listLength }}</span>
+						<span>分类</span>
+					</router-link>
+				</div>
+				<div class="aside-link">
+					<a href="https://github.com/hsiangleev">
+						<i class="fa fa-github"></i>
+						Github
 					</a>
 				</div>
 			</div>
@@ -33,6 +43,12 @@ export default {
 	computed: {
 		isShowAside() {
 			return this.$store.state.isShowAside;
+		},
+		logLength() {
+			return this.$store.state.logLength;
+		},
+		listLength() {
+			return this.$store.state.ListLength
 		}
 	},
 }
@@ -119,6 +135,27 @@ export default {
 						&:last-of-type{
 							top: 25px;
 						}
+					}
+				}
+			}
+			.aside-link{
+				text-align: center;
+				a{
+					color: #aaa;
+					margin-right: 10px;
+					display: inline-block;
+					position: relative;
+					&:hover{
+						color: #fff;
+					}
+					&:after{
+						content: "";
+						width: 100%;
+						height: 1px;
+						background-color: #aaa;
+						position: absolute;
+						left: 0px;
+						bottom: -2px;
 					}
 				}
 			}

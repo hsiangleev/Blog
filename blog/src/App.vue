@@ -46,6 +46,7 @@ export default {
 	},
 	mounted() {
 		this.init();
+		this.getClassify();
 	},
 	methods: {
 		// 页面访问次数
@@ -110,7 +111,28 @@ export default {
 			.catch((error)=>{
 				console.log(error);
 			});
-		}
+		},
+		// 获取分类长度
+		getClassify() {
+			this.$store.state.loading=true;
+			var sendData={
+				whereStr: {
+					_id: "classify"
+				}
+			}
+			axios({
+				method: 'post',
+				url: '/getClassify',
+				data: sendData
+			})
+			.then((res)=>{
+				this.$store.state.ListLength=res.data.data.length;
+				this.$store.state.loading=false;
+			})
+			.catch((error)=>{
+				console.log(error);
+			});
+		},
 	}
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
 	<div id="add" class="add" v-cloak>
-		<div class="clearfix" v-if="name==='凉宫西辰'">
+		<div class="clearfix" v-if="isShow">
 			<div class="add-set">
 				<el-select v-model="listValue" placeholder="文章分类">
 					<el-option
@@ -34,7 +34,7 @@
 			</div>
 		</div>
 		<div v-else>
-			{{ msg }}
+			{{ errorMsg }}
 		</div>
 	</div>
 </template>
@@ -47,7 +47,7 @@ export default {
 	name: 'lee-manager-add',
 	data () {
 		return {
-			msg: "",
+			errorMsg: "",
 			data: "",
 			title: '',		// 标题
 			preface: "",	// 前言
@@ -73,6 +73,9 @@ export default {
 		},
 		isEdit() {
 			return this.num>0;			// 是否为编辑状态
+		},
+		isShow() {
+			return this.name===this.$store.state.managerName;
 		}
 	},
 	mounted() {
@@ -153,7 +156,7 @@ export default {
 						this.articleLength=res.data.len;
 					}
 				}
-				this.msg="没有权限查看本页面";
+				this.errorMsg="没有权限查看本页面";
 				this.$store.state.loading=false;
 			})
 			.catch((error)=>{

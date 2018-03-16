@@ -285,7 +285,6 @@ export default {
 				session: str,
 				index: index
 			}
-
 			axios({
 				method: 'post',
 				url: '/loginAddSession',
@@ -303,6 +302,15 @@ export default {
 			.catch((error)=>{
 				console.log(error);
 			});
+
+			// 判断是否是管理员(是管理员则显示管理链接)
+			if(this.ruleForm1.name===this.$store.state.managerName){
+				this.$store.state.isShowManager=true;
+			}else{
+				this.$store.state.isShowManager=false;
+			}
+
+
 			this.$store.state.login=false;
 		},
 		addUser() {

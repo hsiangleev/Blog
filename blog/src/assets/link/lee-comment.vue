@@ -155,6 +155,8 @@ export default {
 				sessionStorage.removeItem("id");
 				this.$store.state.loginSuccess=false;
 				this.isLogin=false;
+				// 隐藏管理链接
+				this.$store.state.isShowManager=false;
 				this.$message({
 					message: '您已在另一个窗口登陆',
 					center: true,
@@ -170,6 +172,8 @@ export default {
 				// 退出登录
 				this.$store.state.loginSuccess=false;
 				this.isLogin=false;
+				// 隐藏管理链接
+				this.$store.state.isShowManager=false;
 			}else{
 				this.$store.state.login=true;
 			}

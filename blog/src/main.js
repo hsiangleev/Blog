@@ -42,6 +42,7 @@ import home from "./assets/components/lee-article.vue"
 import list from "./assets/link/lee-list.vue"
 import timeaxis from "./assets/link/lee-timeaxis.vue"
 import text from "./assets/link/lee-text.vue"
+import about from "./assets/link/lee-about.vue"
 import manager from "./assets/link/lee-manager.vue"
 import add from "./assets/manager/lee-manager-add.vue"
 import error from "./assets/components/lee-error.vue"
@@ -76,6 +77,12 @@ const router=new VueRouter({
 			component: text
 		},
 		{
+			path: "/about",
+			name: "about",
+			props: true,
+			component: about
+		},
+		{
 			path: "/manager",
 			name: "manager",
 			props: true,
@@ -99,11 +106,15 @@ const router=new VueRouter({
 
 const store=new Vuex.Store({
 	state: {
+		managerName: "凉宫西辰",	// 管理员姓名
 		isShowAside: true,
 		loading: false,
 		login: false,			// 是否显示登陆窗
 		count: 0,
 		loginSuccess: false,	// 用户是否登陆成功(主要用于用户登陆成功时刷新用户名)
+		logLength: 0,			// 共计多少篇日志
+		ListLength: 0,			// 共计多少分类
+		isShowManager: false,	// 是否显示管理链接
 	},
 	mutations: {
 		changeAside(state) {
