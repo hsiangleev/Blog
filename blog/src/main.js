@@ -106,15 +106,15 @@ const router=new VueRouter({
 
 const store=new Vuex.Store({
 	state: {
-		managerName: "凉宫西辰",	// 管理员姓名
-		isShowAside: true,
-		loading: false,
-		login: false,			// 是否显示登陆窗
-		count: 0,
-		loginSuccess: false,	// 用户是否登陆成功(主要用于用户登陆成功时刷新用户名)
-		logLength: 0,			// 共计多少篇日志
-		ListLength: 0,			// 共计多少分类
-		isShowManager: false,	// 是否显示管理链接
+		managerName: "凉宫西辰",	 // 管理员姓名
+		isShowAside: true,			// 是否显示侧边栏
+		loading: false,				// 是否显示加载窗
+		login: false,				// 是否显示登陆窗
+		count: 0,					// 网站总访问量
+		loginSuccess: false,		// 用户是否登陆成功(主要用于用户登陆成功时刷新用户名)
+		logLength: 0,				// 共计多少篇日志
+		ListLength: 0,				// 共计多少分类
+		isShowManager: false,		// 是否显示管理链接
 	},
 	mutations: {
 		changeAside(state) {

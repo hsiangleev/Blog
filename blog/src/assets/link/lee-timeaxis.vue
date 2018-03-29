@@ -1,16 +1,24 @@
 <template>
 	<div id="timeaxis">
+        <el-form :inline="true" class="demo-form-inline">
+            <el-form-item>
+                <el-input v-model="search" placeholder="查找文章"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button :plain="true" @click="searchArticle">查询</el-button>
+            </el-form-item>
+        </el-form>
 		<ul>
             <transition-group name="list" tag="p" appear>
-                <li key="0">
-                    <span></span>
+                <li key="-1">
+                    <i></i>
                     <p>目前共计 {{ data.length }} 篇日志，继续努力！</p>
                 </li>
                 <li v-for="(val,index) in data" :key="index+1">
-                    <span></span>
+                    <i></i>
                     <a href="javascript:;" @click="changeRouter(val.num)">{{ val.time }} —— {{ val.title }}</a>
                 </li>
-                <li :key="-1"></li>
+                <li key="-2"></li>
             </transition-group>
         </ul>
 	</div>
@@ -26,6 +34,7 @@ export default {
             data: [],
             isShow: false,
             typeArr: [],
+            search: ""
 		}
     },
     computed: {
@@ -45,7 +54,8 @@ export default {
 				whereStr: {
                     _id: "blog"
 				},
-                type: this.type
+                type: this.type,
+                search: false,
             }
             axios({
 				method: 'post',
@@ -90,7 +100,7 @@ export default {
                         }else{
                             clearInterval(this.timer);
                         }
-                    },150)
+                    },100)
                     this.$store.state.loading=false;
                 })
                 .catch((error)=>{
@@ -103,14 +113,60 @@ export default {
         },
         changeRouter(index) {
             this.$router.push({ path: `/text/${index}` })
+        },
+        searchArticle() {
+            if(this.search==""){
+                this.$message({
+					message: '请输入关键字',
+					center: true,
+					duration: 3000,
+					type: "warning"
+				});
+				return;
+            }
+            this.$store.state.loading=true;
+			var sendData={
+				whereStr: {
+                    _id: "blog"
+				},
+                search: true,
+                searchStr: this.search
+            }
+            axios({
+				method: 'post',
+				url: '/timeaxis',
+				data: sendData
+			})
+			.then((res)=>{
+                var i=0;
+                this.data=[];
+                this.search="";
+                clearInterval(this.timer);
+                this.timer=setInterval(()=>{
+                    if(i<res.data.data.length){
+                        // 逐个放入，动画效果
+                        this.data.push(res.data.data[i]);
+                        i++;
+                    }else{
+                        clearInterval(this.timer);
+                    }
+                },100)
+                this.$store.state.loading=false;
+			})
+			.catch((error)=>{
+				console.log(error);
+			});
         }
     }
 }
 </script>
 
 <style lang="scss">
-    .list-enter-active, .list-leave-active {
-        transition: all 1s;
+    .list-enter-active {
+        transition: all 0.5s;
+    }
+    .list-leave-active {
+        transition: all 0.2s;
     }
     .list-enter, .list-leave-to{
         opacity: 0;
@@ -120,6 +176,9 @@ export default {
         padding: 25px 0px;
         position: relative;
         z-index: 2;
+        button, input {
+			background-color: transparent;
+		}
         ul{
             border-left: 4px solid #f5f5f5;
             li{
@@ -128,7 +187,7 @@ export default {
                 padding: 20px;
                 border-bottom: 1px dashed #ccc;
                 &:first-of-type{
-                    span{
+                    i{
                         top: 0px;
                         width: 14px;
                         height: 14px;
@@ -150,7 +209,7 @@ export default {
                     padding-top: 5px;
                     padding-bottom: 5px;
                 }
-                span{
+                i{
                     width: 8px;
                     height: 8px;
                     background-color: #ccc;

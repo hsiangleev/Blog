@@ -193,6 +193,7 @@ export default {
 				this.isLogin=false;
 				// 隐藏管理链接
 				this.$store.state.isShowManager=false;
+				this.name="";
 			}else{
 				this.$store.state.login=true;
 			}

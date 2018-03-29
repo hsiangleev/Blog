@@ -25,10 +25,10 @@
 						<i class="fa fa-github"></i>
 						Github
 					</a>
-					<a href="javascript:;">
+					<router-link to="/timeaxis/all">
 						<i class="fa fa-search"></i>
 						search
-					</a>
+					</router-link>
 				</div>
 			</div>
 		</div>
