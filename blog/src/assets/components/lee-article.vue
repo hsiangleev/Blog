@@ -3,7 +3,7 @@
 		<div class="article-content" v-for="(val,index) in data">
 			<div class="article-content-header">
 				<a href="javascript:;" @click="changeRouter(index)">
-					{{ val.num }}
+					{{ val.article.title }}
 				</a>
 			</div>
 			<div class="article-content-info">
@@ -141,7 +141,11 @@ export default {
 			.article-content-header{
 				font-size: 22px;
 				font-weight: 700;
-				margin: 15px 0px;
+				margin: 20px 0px;
+				text-align: center;
+				a:hover{
+					text-decoration: underline;
+				}
 			}
 			.article-content-info{
 				.time,

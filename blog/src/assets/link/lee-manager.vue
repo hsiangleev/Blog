@@ -4,8 +4,6 @@
 			<div class="manager-right-tabs">
 				<ul class="clearfix">
 					<li><a href="javascript:;" class="current" title="">日志</a></li>
-					<li><a href="javascript:;" title="">日志</a></li>
-					<li><a href="javascript:;" title="">日志</a></li>
 				</ul>
 			</div>
 			<div class="manager-right-header">
@@ -14,7 +12,7 @@
 						<router-link to="/manager/add/0" title="">新增日志</router-link>
 					</li>
 					<li><a href="javascript:;" @click="addList" title="">新增分类</a></li>
-					<li><a href="javascript:;" title="">[编辑分类]</a></li>
+					<li><a href="javascript:;" @click="removeList" title="">删除分类</a></li>
 				</ul>
 			</div>
 			<div class="manager-right-content">
@@ -272,6 +270,10 @@ export default {
 					message: '取消输入'
 				});       
 			});
+		},
+		// 删除分类
+		removeList() {
+
 		}
 	}
 }

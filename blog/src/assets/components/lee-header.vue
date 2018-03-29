@@ -24,7 +24,7 @@
 			</el-col>
 			<el-col :xs="24" :sm="16">
 				<!-- 电脑端 -->
-				<div class="nav" v-if="!this.isPhone">
+				<div class="nav" v-if="!isPhone">
 					<ul class="clearfix ">
 						<li v-for="(val,index) in nav">
 							<router-link :to="val.address">

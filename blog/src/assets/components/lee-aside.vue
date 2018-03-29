@@ -3,7 +3,8 @@
 		<div id="aside" class="hidden-sm-and-down" v-if="isShowAside">
 			<div class="aside-inner">
 				<div class="img">
-					<!-- <img src="" alt=""> -->
+					<!-- <img src="src/assets/images/photo.jpg" alt=""> -->
+					<div class="img-cover"></div>
 				</div>
 				<div class="aside-header">
 					<p>hsianglee</p>
@@ -23,6 +24,10 @@
 					<a href="https://github.com/hsiangleev">
 						<i class="fa fa-github"></i>
 						Github
+					</a>
+					<a href="javascript:;">
+						<i class="fa fa-search"></i>
+						search
 					</a>
 				</div>
 			</div>
@@ -85,6 +90,20 @@ export default {
 				width: 100px;
 				height: 100px;
 				border: 1px solid #fff;
+				position: relative;
+				img{
+					display: inline-block;
+					width: 100%;
+					height: 100%;
+				}
+				.img-cover{
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					top: 0px;
+					left: 0px;
+					z-index: 1;
+				}
 			}
 			.aside-header{
 				p{
@@ -142,7 +161,7 @@ export default {
 				text-align: center;
 				a{
 					color: #aaa;
-					margin-right: 10px;
+					margin-right: 5px;
 					display: inline-block;
 					position: relative;
 					&:hover{

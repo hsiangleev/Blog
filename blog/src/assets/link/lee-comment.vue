@@ -30,11 +30,19 @@
 							<span class="name">{{ value.name }}</span>
 						</p>
 						<div class="text">
-							{{ value.text }}
+							<el-checkbox-group v-if="isShow" v-model="ruleForm[index]">
+								<el-checkbox :label="i" :name="'type'+index">
+									{{ value.text }}
+								</el-checkbox>
+							</el-checkbox-group>
+							<span v-else>{{ value.text }}</span>
 						</div>
 					</div>
 					<div class="text-right">
-						<el-button :plain="true" size="mini" @click="reply(index,val.length)">回复</el-button>
+						<el-button-group class="btn-group">
+							<el-button :plain="true" size="mini" @click="reply(index,val.length)">回复</el-button>
+							<el-button :plain="true" size="mini" v-if="isShow" @click="commentDelete(index)">删除</el-button>
+						</el-button-group>
 					</div>
 					<el-input
 						v-if="isShowTextarea"
@@ -64,6 +72,7 @@ export default {
 			data: [],
 			textarea1: "",
 			textarea2: [],
+			ruleForm: [],
 		}
 	},
 	mounted() {
@@ -75,6 +84,9 @@ export default {
 		},
 		loginSuccess() {
 			return this.$store.state.loginSuccess
+		},
+		isShow() {
+			return this.name===this.$store.state.managerName;
 		}
 	},
 	watch: {
@@ -102,9 +114,11 @@ export default {
 				data: sendData
 			})
 			.then((res)=>{
+				this.ruleForm=[];
 				this.data=res.data.data;
 				this.data.forEach((val,index)=>{
 					this.textarea2[index]="";
+					this.ruleForm[index]=[];
 				})
 				// 调用vuex中的方法获取name
 				this.$store.getters.getPower(this.init);
@@ -150,6 +164,11 @@ export default {
 			if(name!=="-"){
 				this.isLogin=!!value;
 				this.name=name;
+				if(name===this.$store.state.managerName){
+					this.$store.state.isShowManager=true;
+				}else{
+					this.$store.state.isShowManager=false;
+				}
 			}else{
 				// 退出登录
 				sessionStorage.removeItem("id");
@@ -296,6 +315,65 @@ export default {
 				// 还未登录
 				this.$store.state.login=true;
 			}
+		},
+		commentDelete(index) {
+			if(this.ruleForm[index].length<=0){
+				this.$message({
+					message: '请选则留言',
+					center: true,
+					duration: 3000,
+					type: "warning"
+				});
+				return;
+			}
+			// 从数组中移除num等于num的那一项
+			this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.$store.state.loading=true;
+				axios({
+					method: 'post',
+					url: '/commentDelete',
+					data: {
+						num: this.num,
+						index: this.data.length-index-1,
+						comArr: this.ruleForm[index]
+					}
+				})
+				.then((res)=>{
+					if(res.data.ok==1){
+						this.$store.state.loading=false;
+						this.$message({
+							message: '删除成功',
+							center: true,
+							duration: 1500,
+							type: "success"
+						});
+						this.ruleForm[index]=[];
+						this.refresh();
+					}else{
+						this.$store.state.loading=false;
+						this.$message({
+							message: '删除失败',
+							center: true,
+							duration: 1500,
+							type: "error"
+						});
+					}
+				})
+				.catch((error)=>{
+					console.log(error);
+				});
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					center: true,
+					duration: 1500,
+					message: '已取消删除'
+				});          
+			});
 		},
 		// 获取当前时间
 		getTime() {

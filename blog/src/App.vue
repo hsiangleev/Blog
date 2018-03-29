@@ -45,12 +45,14 @@ export default {
 		leeLogin
 	},
 	mounted() {
-		this.init();
+		this.initCount();
 		this.getClassify();
+		// 调用vuex中的方法获取name
+		this.$store.getters.getPower(this.init);
 	},
 	methods: {
 		// 页面访问次数
-		init() {
+		initCount() {
 			axios({
 				method: 'post',
 				url: '/count',
@@ -62,6 +64,30 @@ export default {
 			.catch((error)=>{
 				console.log(error);
 			});
+		},
+		// 判断是否登录
+		init(name) {
+			// 若name为-，则说明已经在另一个窗口登陆，清空当前窗口登陆信息
+			if(name!=="-"){
+				// 若为管理员登陆则显示管理链接
+				if(name===this.$store.state.managerName){
+					this.$store.state.isShowManager=true;
+				}else{
+					this.$store.state.isShowManager=false;
+				}
+			}else{
+				// 退出登录
+				sessionStorage.removeItem("id");
+				this.$store.state.loginSuccess=false;
+				// 隐藏管理链接
+				this.$store.state.isShowManager=false;
+				this.$message({
+					message: '您已在另一个窗口登陆',
+					center: true,
+					duration: 3000,
+					type: "warning"
+				});
+			}
 		},
 		getAddress() {
 			axios({

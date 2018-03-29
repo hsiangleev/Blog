@@ -22,10 +22,10 @@ export default {
 	name: 'lee-timeaxis',
 	data () {
 		return {
-            arr: [],
             timer: null,
             data: [],
             isShow: false,
+            typeArr: [],
 		}
     },
     computed: {
@@ -56,30 +56,46 @@ export default {
                 if(this.type==="all"){
                     this.isShow=true;
                 }
-                res.data.data.forEach((val,index)=>{
-                    if(val.type===this.type){
-                        this.isShow=true;
+                axios({
+                    method: 'post',
+                    url: '/getClassify',
+                    data: {
+                        whereStr: {
+                            _id: "classify"
+                        }
                     }
                 })
-                // 判断路由是否正确
-                if(!this.isShow){
-                    this.$router.push("../error");
-                    this.$store.state.loading=false;
-                    return;
-                }
+                .then((r)=>{
+                    this.typeArr=res.data.data;
+                    r.data.data.forEach((val,index)=>{
+                        if(val===this.type){
+                            this.isShow=true;
+                        }
+                    })
 
-                var i=0;
-                clearInterval(this.timer);
-                this.timer=setInterval(()=>{
-                    if(i<res.data.data.length){
-                        // 逐个放入，动画效果
-                        this.data.push(res.data.data[i]);
-                        i++;
-                    }else{
-                        clearInterval(this.timer);
+                    // 判断路由是否正确
+                    if(!this.isShow){
+                        this.$router.push("../error");
+                        this.$store.state.loading=false;
+                        return;
                     }
-                },150)
-                this.$store.state.loading=false;
+
+                    var i=0;
+                    clearInterval(this.timer);
+                    this.timer=setInterval(()=>{
+                        if(i<res.data.data.length){
+                            // 逐个放入，动画效果
+                            this.data.push(res.data.data[i]);
+                            i++;
+                        }else{
+                            clearInterval(this.timer);
+                        }
+                    },150)
+                    this.$store.state.loading=false;
+                })
+                .catch((error)=>{
+                    console.log(error);
+                });
 			})
 			.catch((error)=>{
 				console.log(error);

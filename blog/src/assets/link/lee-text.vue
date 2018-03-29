@@ -3,7 +3,7 @@
 	<div id="text" style="position: relative; z-index: 2;">
 		<div class="text-content" v-if="hasArticle">
 			<div class="article-content-header">
-				{{ data.num }}
+				{{ article.title }}
 			</div>
 			<div class="article-content-info">
 				<div class="time">
@@ -131,7 +131,8 @@ export default {
 		.article-content-header{
 			font-size: 22px;
 			font-weight: 700;
-			margin: 15px 0px;
+			margin: 20px 0px;
+			text-align: center;
 		}
 		.article-content-info{
 			.time,

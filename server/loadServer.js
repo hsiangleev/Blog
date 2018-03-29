@@ -14,6 +14,7 @@ var sign=require("./link/sign");
 var signAddUser=require("./link/signAddUser");
 var commentAddComment=require("./link/commentAddComment");
 var commentReply=require("./link/commentReply");
+var commentDelete=require("./link/commentDelete");
 
 var timeaxis=require("./link/timeaxis");
 
@@ -66,6 +67,9 @@ exports.loadServer=function(app){
     });
     app.post('/commentReply', function(req, res){
         commentReply.commentReply(res,req.body);
+    });
+    app.post('/commentDelete', function(req, res){
+        commentDelete.commentDelete(res,req.body);
     });
     app.post('/timeaxis', function(req, res){
         timeaxis.timeaxis(res,req.body);
