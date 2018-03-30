@@ -201,6 +201,11 @@ a,a:hover{color:#333;}
 .text-right{
 	text-align: right;
 }
-
+@media only screen and (max-width: 767px) {
+	.el-message-box{
+		width: auto;
+	}
+}
+	
 
 </style>
