@@ -75,7 +75,7 @@ export default {
 			return this.num>0;			// 是否为编辑状态
 		},
 		isShow() {
-			return this.name===this.$store.state.managerName;
+			return this.$store.state.isManager;
 		}
 	},
 	mounted() {

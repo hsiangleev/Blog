@@ -86,7 +86,7 @@ export default {
 			return this.$store.state.loginSuccess
 		},
 		isShow() {
-			return this.name===this.$store.state.managerName;
+			return this.$store.state.isManager;
 		}
 	},
 	watch: {
@@ -164,7 +164,7 @@ export default {
 			if(name!=="-"){
 				this.isLogin=!!value;
 				this.name=name;
-				if(name===this.$store.state.managerName){
+				if(this.$store.state.isManager){
 					this.$store.state.isShowManager=true;
 				}else{
 					this.$store.state.isShowManager=false;
@@ -176,6 +176,8 @@ export default {
 				this.isLogin=false;
 				// 隐藏管理链接
 				this.$store.state.isShowManager=false;
+				// 管理员退出登陆
+				this.$store.state.isManager=false;
 				this.$message({
 					message: '您已在另一个窗口登陆',
 					center: true,
@@ -194,6 +196,8 @@ export default {
 				// 隐藏管理链接
 				this.$store.state.isShowManager=false;
 				this.name="";
+				// 管理员退出登陆
+				this.$store.state.isManager=false;
 			}else{
 				this.$store.state.login=true;
 			}

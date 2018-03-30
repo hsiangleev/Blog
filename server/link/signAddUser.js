@@ -7,6 +7,7 @@ exports.signAddUser=function(res,msg){
     var obj={};
     obj["user."+num+".name"] = name;
     obj["user."+num+".pword"] = pass;
+    obj["user."+num+".role"] = "U";
     var updateStr = {$set: obj};
     var updateMsg={
         whereStr: {

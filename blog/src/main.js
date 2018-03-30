@@ -106,7 +106,7 @@ const router=new VueRouter({
 
 const store=new Vuex.Store({
 	state: {
-		managerName: "凉宫西辰",	 // 管理员姓名
+		isManager: false,			// 当前是否为管理员登陆
 		isShowAside: true,			// 是否显示侧边栏
 		loading: false,				// 是否显示加载窗
 		login: false,				// 是否显示登陆窗
@@ -154,6 +154,7 @@ const store=new Vuex.Store({
 				.then((res)=>{
 					if(res.data.data!==-1){
 						name=res.data.data;
+						store.state.isManager=res.data.isManager;
 					}
 					callback(name);
 				})

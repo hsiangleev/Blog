@@ -3,10 +3,30 @@
 		<div class="title">当前页面文章分类信息</div>
 		<ul>
 			<li v-for="(val,index) in type">
-				<a href="javascript:;" @click="changeRouter(val)">{{ val }}</a>
-				<span> [{{ len[index] }}]</span>
+				<div v-if="isShow">
+					<el-checkbox-group v-if="len[index] == 0" v-model="ruleForm">
+						<el-checkbox :label="index" name="type">
+							<a href="javascript:;" @click="changeRouter(val)">{{ val }}</a>
+							<span> [{{ len[index] }}]</span>
+						</el-checkbox>
+					</el-checkbox-group>
+					<div v-else>
+						<a href="javascript:;" @click="changeRouter(val)">{{ val }}</a>
+						<span> [{{ len[index] }}]</span>
+					</div>
+				</div>
+				<div v-else>
+					<a href="javascript:;" @click="changeRouter(val)">{{ val }}</a>
+					<span> [{{ len[index] }}]</span>
+				</div>
 			</li>
 		</ul>
+		<el-row v-if="isShow">
+			<el-button-group>
+				<el-button type="primary" @click="addList" plain>新增分类</el-button>
+				<el-button type="danger" @click="deleteList" plain>删除分类</el-button>
+			</el-button-group>
+		</el-row>
 	</div>
 </template>
 
@@ -17,11 +37,17 @@ export default {
 	data () {
 		return {
 			type: [],
-			len: []
+			len: [],
+			ruleForm: [],
 		}
 	},
 	mounted() {
 		this.getClassify();
+	},
+	computed: {
+		isShow() {
+			return this.$store.state.isManager;
+		}
 	},
 	methods: {
 		// 获取分类信息
@@ -74,7 +100,113 @@ export default {
 		},
 		changeRouter(msg) {
             this.$router.push({ path: `/timeaxis/${msg}` })
-        }
+		},
+		// 添加分类
+		addList() {
+			this.$prompt('请输入分类信息', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				inputPattern: /^([\u4E00-\uFA29]|[\uE7C7-\uE7F3]|[a-zA-Z0-9_]){2,16}$/,
+				inputErrorMessage: '分类长度2到16位'
+			}).then(({ value }) => {
+				var sendData={
+					whereStr: {
+						_id: "classify"
+					}
+				}
+				axios({
+					method: 'post',
+					url: '/getClassify',
+					data: sendData
+				})
+				.then((res)=>{
+					var hasList=false;
+					res.data.data.forEach((val)=>{
+						if(val===value){
+							hasList=true;
+						}
+					})
+					// 判断是否存在此分类
+					if(hasList){
+						this.$message({
+							type: 'wrong',
+							center: true,
+							duration: 1500,
+							message: '此分类已存在，请重新输入'
+						}); 
+					}else{
+						axios({
+							method: 'post',
+							url: '/managerAddList',
+							data: {
+								whereStr: {
+									_id: "classify"
+								},
+								list: value
+							}
+						})
+						.then((r)=>{
+							if(r.data.ok==1){
+								this.$message({
+									type: 'success',
+									center: true,
+									duration: 1500,
+									message: '已添加分类信息: ' + value
+								});
+								this.getClassify();
+							}
+						})
+						.catch((error)=>{
+							console.log(error);
+						});
+					}
+				})
+				.catch((error)=>{
+					console.log(error);
+				});
+
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					center: true,
+					duration: 1500,
+					message: '取消输入'
+				});       
+			});
+		},
+		deleteList() {
+			if(this.ruleForm.length<=0){
+				this.$message({
+					type: 'warning',
+					center: true,
+					duration: 1500,
+					message: '请选择需要删除的分类'
+				});
+				return;
+			}
+			axios({
+				method: 'post',
+				url: '/listDeleteList',
+				data: {
+					ruleForm: this.ruleForm
+				}
+			})
+			.then((r)=>{
+				if(r.data.ok==1){
+					this.$message({
+						type: 'success',
+						center: true,
+						duration: 1500,
+						message: '已删除分类信息'
+					});
+					this.ruleForm=[];
+					this.getClassify();
+				}
+			})
+			.catch((error)=>{
+				console.log(error);
+			});
+		}
 	}
 }
 </script>
@@ -103,6 +235,9 @@ export default {
 					font-size: 14px;
 				}
 			}
+		}
+		.el-row{
+			text-align: right;
 		}
 	}
 </style>

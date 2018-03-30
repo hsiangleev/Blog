@@ -70,7 +70,7 @@ export default {
 			// 若name为-，则说明已经在另一个窗口登陆，清空当前窗口登陆信息
 			if(name!=="-"){
 				// 若为管理员登陆则显示管理链接
-				if(name===this.$store.state.managerName){
+				if(this.$store.state.isManager){
 					this.$store.state.isShowManager=true;
 				}else{
 					this.$store.state.isShowManager=false;
