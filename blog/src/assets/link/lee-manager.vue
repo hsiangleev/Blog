@@ -95,15 +95,10 @@ export default {
 			this.$store.state.loading=true;
 			// 获取当前登录的name
 			this.name=name;
-			var sendData={
-				whereStr: {
-					_id: "blog"
-				}
-			}
 			axios({
 				method: 'post',
 				url: '/manager',
-				data: sendData
+				data: {}
 			})
 			.then((res)=>{
 				this.tableData=res.data.data;

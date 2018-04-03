@@ -1,6 +1,8 @@
 var select=require("./../mongodb/select");
 exports.manager=function(res,msg){
-    var whereStr=msg.whereStr;
+    var whereStr={
+        _id: "blog"
+    };
     select.select(whereStr,function(result) {
         var data=result[0].data.reverse();
         

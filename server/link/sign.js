@@ -1,6 +1,8 @@
 var select=require("./../mongodb/select");
 exports.sign=function(res,msg){
-    var whereStr=msg.whereStr;
+    var whereStr={
+        _id : "user"
+    };
     var name=msg.sendMsg.name;
     select.select(whereStr,function(result) {
         var onOff=true;

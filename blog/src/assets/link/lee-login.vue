@@ -189,9 +189,6 @@ export default {
 						var pword=this.encrypt(this.encrypt(this.ruleForm1.pass));
 
 						var sendData={
-							whereStr: {
-								_id : "user"
-							},
 							sendMsg: {
 								name: name, 
 								pword: pword
@@ -237,9 +234,6 @@ export default {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						var sendData={
-							whereStr: {
-								_id : "user"
-							},
 							sendMsg: {
 								name: this.ruleForm2.name
 							}

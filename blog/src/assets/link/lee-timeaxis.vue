@@ -51,9 +51,6 @@ export default {
 			// 获取当前登录的name
 			this.$store.state.loading=true;
 			var sendData={
-				whereStr: {
-                    _id: "blog"
-				},
                 type: this.type,
                 search: false,
             }
@@ -69,11 +66,7 @@ export default {
                 axios({
                     method: 'post',
                     url: '/getClassify',
-                    data: {
-                        whereStr: {
-                            _id: "classify"
-                        }
-                    }
+                    data: {}
                 })
                 .then((r)=>{
                     this.typeArr=res.data.data;
@@ -119,16 +112,13 @@ export default {
                 this.$message({
 					message: '请输入关键字',
 					center: true,
-					duration: 3000,
+					duration: 1500,
 					type: "warning"
 				});
 				return;
             }
             this.$store.state.loading=true;
 			var sendData={
-				whereStr: {
-                    _id: "blog"
-				},
                 search: true,
                 searchStr: this.search
             }

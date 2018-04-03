@@ -83,9 +83,6 @@ export default {
 				this.$store.state.loading=true;
 				// 传回服务器数据
 				var setData={
-					whereStr: {
-						_id: "blog"
-					},
 					page: {
 						pageSize: this.pageSize,
 						currentPage: this.currentPage

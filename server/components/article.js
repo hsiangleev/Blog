@@ -1,6 +1,8 @@
 var select=require("./../mongodb/select");
 exports.article=function(res,msg){
-    var whereStr=msg.whereStr;
+    var whereStr={
+        _id: "blog"
+    };
     var page=msg.page;
     select.select(whereStr,function(result) {
         var star=(page.currentPage-1)*page.pageSize

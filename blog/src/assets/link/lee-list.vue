@@ -53,15 +53,10 @@ export default {
 		// 获取分类信息
 		getClassify() {
 			this.$store.state.loading=true;
-			var sendData={
-				whereStr: {
-					_id: "classify"
-				}
-			}
 			axios({
 				method: 'post',
 				url: '/getClassify',
-				data: sendData
+				data: {}
 			})
 			.then((res)=>{
 				this.type=res.data.data;
@@ -73,15 +68,10 @@ export default {
 		},
 		// 获取每条分类信息长度
 		getTypeLen() {
-			var sendData={
-				whereStr: {
-					_id: "blog"
-				}
-			}
 			axios({
 				method: 'post',
 				url: '/getTypeLen',
-				data: sendData
+				data: {}
 			})
 			.then((res)=>{
 				this.len=[];
@@ -109,15 +99,10 @@ export default {
 				inputPattern: /^([\u4E00-\uFA29]|[\uE7C7-\uE7F3]|[a-zA-Z0-9_]){2,16}$/,
 				inputErrorMessage: '分类长度2到16位'
 			}).then(({ value }) => {
-				var sendData={
-					whereStr: {
-						_id: "classify"
-					}
-				}
 				axios({
 					method: 'post',
 					url: '/getClassify',
-					data: sendData
+					data: {}
 				})
 				.then((res)=>{
 					var hasList=false;
@@ -139,9 +124,6 @@ export default {
 							method: 'post',
 							url: '/managerAddList',
 							data: {
-								whereStr: {
-									_id: "classify"
-								},
 								list: value
 							}
 						})

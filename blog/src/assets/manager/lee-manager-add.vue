@@ -92,15 +92,10 @@ export default {
 	methods: {
 		// 获取分类信息
 		getClassify() {
-			var sendData={
-				whereStr: {
-					_id: "classify"
-				}
-			}
 			axios({
 				method: 'post',
 				url: '/getClassify',
-				data: sendData
+				data: {}
 			})
 			.then((res)=>{
 				this.options=[
@@ -125,9 +120,6 @@ export default {
 			this.name=name;
 			this.$store.state.loading=true;
 			var sendData={
-				whereStr: {
-					_id: "blog"
-				},
 				num: Number(this.num)-1
 			}
 			axios({

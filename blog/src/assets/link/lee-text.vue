@@ -68,9 +68,6 @@ export default {
 		init() {
 			this.$store.state.loading=true;
 			var sendData={
-				whereStr: {
-					_id: "blog"
-				},
 				searchNum: {
 					num: Number(this.num)-1
 				}

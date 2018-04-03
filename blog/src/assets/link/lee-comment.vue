@@ -100,9 +100,6 @@ export default {
 		// 初始化页面
 		initPage() {
 			var sendData={
-				whereStr: {
-					_id : "blog"
-				},
 				searchNum: {
 					num: Number(this.num)-1
 				}
@@ -131,9 +128,6 @@ export default {
 		// 刷新页面
 		refresh() {
 			var sendData={
-				whereStr: {
-					_id : "blog"
-				},
 				searchNum: {
 					num: Number(this.num)-1
 				}

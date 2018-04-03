@@ -1,6 +1,8 @@
 var update=require("./../mongodb/update");
 exports.managerAddList=function(res,msg){
-    var whereStr=msg.whereStr;
+    var whereStr={
+        _id: "classify"
+    };
     var list=msg.list;
 
     let obj={

@@ -1,6 +1,8 @@
 var select=require("./../mongodb/select");
 exports.editInit=function(res,msg){
-    var whereStr=msg.whereStr;
+    var whereStr={
+        _id: "blog"
+    };
     var num=msg.num;
     select.select(whereStr,function(result) {
         var total=result[0].data.length;

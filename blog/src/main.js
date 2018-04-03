@@ -138,9 +138,6 @@ const store=new Vuex.Store({
 				// 若name为-，则说明没有拿到数据，即session已经更改，已经在另一个窗口登陆，需清空当前窗口登陆信息
 				var name="-";
 				var sendData={
-					whereStr: {
-						_id : "user"
-					},
 					value: {
 						id: Number(value)
 					}

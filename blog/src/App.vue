@@ -141,15 +141,10 @@ export default {
 		// 获取分类长度
 		getClassify() {
 			this.$store.state.loading=true;
-			var sendData={
-				whereStr: {
-					_id: "classify"
-				}
-			}
 			axios({
 				method: 'post',
 				url: '/getClassify',
-				data: sendData
+				data: {}
 			})
 			.then((res)=>{
 				this.$store.state.ListLength=res.data.data.length;

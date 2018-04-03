@@ -2,7 +2,9 @@ var select=require("./../mongodb/select");
 exports.timeaxis=function(res,msg){
     // 判断是否是搜索
     if(msg.search){
-        var whereStr=msg.whereStr;
+        var whereStr={
+            _id: "blog"
+        };
         var searchStr=msg.searchStr;
         var tableData=[];
         select.select(whereStr,function(result) {
@@ -34,7 +36,9 @@ exports.timeaxis=function(res,msg){
             
         return;
     }
-    var whereStr=msg.whereStr;
+    var whereStr={
+        _id: "blog"
+    };
     var type=msg.type;
     select.select(whereStr,function(result) {
         var data=result[0].data.reverse();
