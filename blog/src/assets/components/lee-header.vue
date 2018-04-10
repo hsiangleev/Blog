@@ -296,6 +296,7 @@ export default {
 				display: inline-block;
 				line-height: 50px;
 				li{
+					list-style: none;
 					float: left;
 					a{
 						padding: 5px 10px;

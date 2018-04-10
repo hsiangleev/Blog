@@ -228,6 +228,7 @@ export default {
 				top: -30px;
 				ul{
 					li{
+						list-style: none;
 						float: left;
 						margin-right: 10px;
 						a{
@@ -255,6 +256,7 @@ export default {
 				top: 0px;
 				ul{
 					li{
+						list-style: none;
 						float: left;
 						padding: 0px 10px;
 						a{

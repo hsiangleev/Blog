@@ -419,6 +419,7 @@ export default {
 		.text-content-comment-content{
 			ul{
 				li{
+					list-style: none;
 					position: relative;
 					border-top: 1px solid #ccc;
 					font-size: 14px;

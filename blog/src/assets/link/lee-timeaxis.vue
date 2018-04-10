@@ -172,6 +172,7 @@ export default {
         ul{
             border-left: 4px solid #f5f5f5;
             li{
+                list-style: none;
                 position: relative;
                 min-height: 20px;
                 padding: 20px;

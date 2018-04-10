@@ -204,6 +204,7 @@ export default {
 		}
 		ul{
 			li{
+				list-style: none;
 				margin: 15px 0px;
 				font-size: 16px;
 				a{
