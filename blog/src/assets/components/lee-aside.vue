@@ -3,7 +3,7 @@
 		<div id="aside" class="hidden-sm-and-down" v-if="isShowAside">
 			<div class="aside-inner">
 				<div class="img">
-					<!-- <img src="src/assets/images/photo.jpg" alt=""> -->
+					<!-- <img src="/src/assets/images/photo.jpg" alt=""> -->
 					<div class="img-cover"></div>
 				</div>
 				<div class="aside-header">

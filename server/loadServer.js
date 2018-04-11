@@ -28,7 +28,10 @@ var getClassify=require("./manager/getClassify");
 var getTypeLen=require("./manager/getTypeLen");
 var managerAddList=require("./link/managerAddList");
 
+var loadImages=require("./manager/loadImages");
+
 var listDeleteList=require("./link/listDeleteList");
+
 exports.loadServer=function(app){
     app.post('/count', function(req, res){
         count.count(res);
@@ -107,4 +110,8 @@ exports.loadServer=function(app){
     app.post('/listDeleteList', function(req, res){
         listDeleteList.listDeleteList(res,req.body);
     });
+
+    // 图片上传
+    loadImages.loadImages(app);
+
 }
