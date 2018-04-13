@@ -73,6 +73,7 @@ export default {
 	},
 	mounted() {
 		this.handleCurrentChange(this.currentPage);
+		this.$store.getters.getPower(this.$root.$children[0].init);		// 清除缓存之后重新判断用户
 	},
 	methods: {
 		handleSizeChange(val) {

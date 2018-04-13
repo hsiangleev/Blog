@@ -7,13 +7,13 @@
 				action="../../loadImages"
 				:on-preview="handlePreview"
 				:on-remove="handleRemove"
-				:before-remove="beforeRemove"
 				multiple
 				:limit="3"
 				:on-exceed="handleExceed"
+				:before-upload="beforeAvatarUpload"
 				:file-list="fileList">
 				<el-button size="small">图片上传</el-button>
-				<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+				<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过1MB</div>
 			</el-upload>
 
 			<div class="add-set">
@@ -291,8 +291,17 @@ export default {
 		handleExceed(files, fileList) {
 			this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
 		},
-		beforeRemove(file, fileList) {
-			return this.$confirm(`确定移除 ${ file.name }？`);
+		beforeAvatarUpload(file) {
+			const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
+			const isLt2M = file.size <= 1024;
+
+			if (!isJPG) {
+				this.$message.error('上传图片只能是 JPG 或 png 或 gif 格式!');
+			}
+			if (!isLt2M) {
+				this.$message.error('上传图片大小不能超过 1MB!');
+			}
+			return isJPG && isLt2M;
 		}
 	}
 }

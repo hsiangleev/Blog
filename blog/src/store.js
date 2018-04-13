@@ -60,6 +60,7 @@ export default {
                             console.log(error);
                         });
                     }else{
+                        state.isManager=false;
                         callback("");
                     }
         
