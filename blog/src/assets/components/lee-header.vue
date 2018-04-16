@@ -3,7 +3,7 @@
 		<el-row >
 			<el-col :xs="24" :sm="8">
 				<div class="header-logo">
-					<a href="javascript:;" title="" @click="refresh">
+					<a href="http://hsianglee.xin" title="刷新首页">
 						<transition name="bounce" appear>
 							<span class="hidden-xs-only"></span>
 						</transition>
@@ -149,9 +149,6 @@ export default {
 		addRouter(index) {
 
 		},
-		refresh() {
-			window.location.replace("http://hsianglee.xin");
-		}
 	}
 }
 </script>
