@@ -13,7 +13,7 @@
 				:before-upload="beforeAvatarUpload"
 				:file-list="fileList">
 				<el-button size="small">图片上传</el-button>
-				<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过1MB</div>
+				<div slot="tip" class="el-upload__tip">只能上传jpg/png/gif文件，且不超过1MB</div>
 			</el-upload>
 
 			<div class="add-set">
@@ -41,7 +41,7 @@
 					type="textarea"
 					:autosize="{ minRows: 20}"
 					placeholder="请输入您的文章内容( makedown语法 )"
-					v-model="article" @keydown="supportTabs" ref="textarea">
+					v-model="article" @keydown.tab.native="supportTabs" ref="textarea">
 				</el-input>
 			</div>
 			<div class="add-right markdown-body" v-html="msg">
@@ -269,18 +269,9 @@ export default {
 		// 支持tab缩进
 		supportTabs() {
 			let e=window.event || event;
-			if (e.keyCode == 9) {
-                e.preventDefault();
-                let indent = '	';
-                let start = this.$refs["textarea"].selectionStart;
-                let end = this.$refs["textarea"].selectionEnd;
-                let selected = window.getSelection().toString();
-                selected = indent + selected.replace(/\n/g, '\n' + indent);
-                this.article = this.article.substring(0, start) + selected
-                        + this.article.substring(end);
-                this.$refs["textarea"].setSelectionRange(start + indent.length, start
-                        + selected.length);
-            }
+			e.preventDefault();
+			let indent = '	';
+			this.article = this.article + indent;
 		},
 		handleRemove(file, fileList) {
 			console.log(file, fileList);
@@ -293,7 +284,7 @@ export default {
 		},
 		beforeAvatarUpload(file) {
 			const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
-			const isLt2M = file.size <= 1024;
+			const isLt2M = file.size / 1024 / 1024 < 1;
 
 			if (!isJPG) {
 				this.$message.error('上传图片只能是 JPG 或 png 或 gif 格式!');

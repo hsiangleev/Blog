@@ -12,7 +12,7 @@
             <transition-group name="list" tag="p" appear>
                 <li key="-1">
                     <i></i>
-                    <p>目前共计 {{ data.length }} 篇日志，继续努力！</p>
+                    <p>共计 {{ data.length }} 篇日志，继续努力！</p>
                 </li>
                 <li v-for="(val,index) in data" :key="index+1">
                     <i></i>
@@ -130,7 +130,7 @@ export default {
 			.then((res)=>{
                 var i=0;
                 this.data=[];
-                this.search="";
+                // this.search="";
                 clearInterval(this.timer);
                 this.timer=setInterval(()=>{
                     if(i<res.data.data.length){
