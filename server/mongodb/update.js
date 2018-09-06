@@ -2,7 +2,14 @@ exports.update=function(updateMsg,callback){
 	var MongoClient = require('mongodb').MongoClient;
 	var DB_CONN_STR = 'mongodb://localhost:27017/test';    
 	 
-	MongoClient.connect(DB_CONN_STR, function(err, db) {
+	MongoClient.connect(DB_CONN_STR,{
+		// useNewUrlParser: true,
+		auth: {
+			user: "hsianglee",
+			password: "lx123321",
+		},
+		authSource: "admin"
+	},function(err, db) {
 		//连接到表  
 		var collection = db.collection('blog');
 		
